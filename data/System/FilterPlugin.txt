@@ -247,11 +247,12 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
    * Set SHORTDESCRIPTION = Substitute and extract information from content by using regular expressions
 -->
 |  Plugin Author: | Michael Daum |
-|  Copyright &copy;: | 2005-2012, Michael Daum http://michaeldaumconsulting.com |
+|  Copyright &copy;: | 2005-2014, Michael Daum http://michaeldaumconsulting.com |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | <!-- versions below in reverse order -->&nbsp; |
+|  10 Apr 2014: | transliterate/normalize unicode strings before sorting them in MAKETEXT |
 |  19 Jun 2012: | added =lastseparator= (by Foswiki:Main/OliverKrueger);\
                   fixed paging when using together with =include= and =exclude= parameters |
 |  15 May 2012: | fixed paging through lists in FORMATLIST |

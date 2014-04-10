@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2005-2012 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2005-2014 Michael Daum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@ use warnings;
 use POSIX qw(ceil);
 use Foswiki::Plugins();
 use Foswiki::Func();
+use Text::Unidecode;
 
 use constant DEBUG => 0; # toggle me
 
@@ -283,6 +284,9 @@ sub handleMakeIndex {
   $theList = Foswiki::Func::expandCommonVariables($theList, $theTopic, $theWeb)
     if expandVariables($theList);
 
+  my $charset = $Foswiki::cfg{Site}{CharSet};
+  $theList = Encode::decode($charset, $theList);
+
   #writeDebug("theList=$theList");
 
   # create the item descriptors for each list item
@@ -304,14 +308,14 @@ sub handleMakeIndex {
       $seen{$item} = 1;
     }
 
-    my $crit = $item;
+    my $crit = unidecode($item);
     if ($crit =~ /\((.*?)\)/) {
       $crit = $1;
     }
     if ($theSort eq 'nocase') {
       $crit = uc($crit);
     }
-    $crit =~ s/[^$Foswiki::regex{'mixedAlphaNum'}]//go;
+    #$crit =~ s/[^$Foswiki::regex{'mixedAlphaNum'}]//go;
 
     my $group = $crit;
     $group = substr($crit, 0, 1) unless $theSort eq 'num';
@@ -498,6 +502,8 @@ sub handleMakeIndex {
 
   # count MAKEINDEX calls
   $this->{makeIndexCounter}++;
+
+  $result = Encode::encode($charset, $result);
 
   return $result;
 }
@@ -746,6 +752,5 @@ sub inlineError {
 sub writeDebug {
   print STDERR "- FilterPlugin - $_[0]\n" if DEBUG;
 }
-
 
 1;
