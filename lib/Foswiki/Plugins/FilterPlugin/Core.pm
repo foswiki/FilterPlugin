@@ -25,7 +25,7 @@ use Foswiki::Plugins();
 use Foswiki::Func();
 use Text::Unidecode;
 
-use constant DEBUG => 0; # toggle me
+use constant TRACE => 0; # toggle me
 
 ###############################################################################
 sub new {
@@ -750,7 +750,7 @@ sub inlineError {
 
 ###############################################################################
 sub writeDebug {
-  print STDERR "- FilterPlugin - $_[0]\n" if DEBUG;
+  print STDERR "- FilterPlugin - $_[0]\n" if TRACE;
 }
 
 1;
