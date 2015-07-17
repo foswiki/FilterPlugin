@@ -180,5 +180,6 @@ lib/CPAN/lib/Text/Unidecode/xfc.pm 0644
 lib/CPAN/lib/Text/Unidecode/xfd.pm 0644
 lib/CPAN/lib/Text/Unidecode/xfe.pm 0644
 lib/CPAN/lib/Text/Unidecode/xff.pm 0644
+lib/Foswiki/Plugins/FilterPlugin/DEPENDENCIES 0644
 lib/Foswiki/Plugins/FilterPlugin/Core.pm 0644
 lib/Foswiki/Plugins/FilterPlugin.pm 0644

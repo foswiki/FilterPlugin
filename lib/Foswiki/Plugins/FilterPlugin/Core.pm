@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2005-2014 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2005-2015 Michael Daum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@ use warnings;
 use POSIX qw(ceil);
 use Foswiki::Plugins();
 use Foswiki::Func();
-use Text::Unidecode;
+use Text::Unidecode();
 
 use constant TRACE => 0; # toggle me
 
@@ -187,6 +187,7 @@ sub handleFilter {
       my $arg9 = $10;
       my $arg10 = $11;
 
+      $prefix = '' unless defined $prefix;
       $arg1 = '' unless defined $arg1;
       $arg2 = '' unless defined $arg2;
       $arg3 = '' unless defined $arg3;
@@ -284,11 +285,6 @@ sub handleMakeIndex {
   $theList = Foswiki::Func::expandCommonVariables($theList, $theTopic, $theWeb)
     if expandVariables($theList);
 
-  my $charset = $Foswiki::cfg{Site}{CharSet};
-  $theList = Encode::decode($charset, $theList);
-
-  #writeDebug("theList=$theList");
-
   # create the item descriptors for each list item
   my @theList = ();
   my %seen = ();
@@ -308,7 +304,7 @@ sub handleMakeIndex {
       $seen{$item} = 1;
     }
 
-    my $crit = unidecode($item);
+    my $crit = Text::Unidecode::unidecode($item);
     if ($crit =~ /\((.*?)\)/) {
       $crit = $1;
     }
@@ -502,8 +498,6 @@ sub handleMakeIndex {
 
   # count MAKEINDEX calls
   $this->{makeIndexCounter}++;
-
-  $result = Encode::encode($charset, $result);
 
   return $result;
 }
