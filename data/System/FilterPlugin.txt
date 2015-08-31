@@ -252,6 +252,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | <!-- versions below in reverse order -->&nbsp; |
+|  31 Aug 2015: | fixing deprecated unescaped left brace in regexes |
 |  17 Jul 2015: | fixed compatibility with Foswiki-2.x |
 |  10 Apr 2014: | transliterate/normalize unicode strings before sorting them in MAKETEXT |
 |  19 Jun 2012: | added =lastseparator= (by Foswiki:Main/OliverKrueger);\

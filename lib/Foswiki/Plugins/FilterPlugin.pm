@@ -21,8 +21,8 @@ use warnings;
 
 use Foswiki::Func();
 
-our $VERSION = '4.10';
-our $RELEASE = '17 Jul 2015';
+our $VERSION = '4.11';
+our $RELEASE = '31 Aug 2015';
 our $NO_PREFS_IN_TOPIC = 1;
 our $SHORTDESCRIPTION = 'Substitute and extract information from content by using regular expressions';
 our $core;
@@ -58,10 +58,10 @@ sub commonTagsHandler {
   my $theTopic = $_[1];
   my $theWeb = $_[2];
 
-  while($_[0] =~ s/%STARTSUBST{(?!.*%STARTSUBST)(.*?)}%(.*?)%STOPSUBST%/&handleFilterArea($1, 1, $2, $theWeb, $theTopic)/ges) {
+  while($_[0] =~ s/%STARTSUBST\{(?!.*%STARTSUBST)(.*?)\}%(.*?)%STOPSUBST%/&handleFilterArea($1, 1, $2, $theWeb, $theTopic)/ges) {
     # nop
   }
-  while($_[0] =~ s/%STARTEXTRACT{(?!.*%STARTEXTRACT)(.*?)}%(.*?)%STOPEXTRACT%/&handleFilterArea($1, 0, $2, $theWeb, $theTopic)/ges) {
+  while($_[0] =~ s/%STARTEXTRACT\{(?!.*%STARTEXTRACT)(.*?)\}%(.*?)%STOPEXTRACT%/&handleFilterArea($1, 0, $2, $theWeb, $theTopic)/ges) {
     # nop
   }
 }
