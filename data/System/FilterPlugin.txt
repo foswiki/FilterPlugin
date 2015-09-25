@@ -1,5 +1,7 @@
 %META:TOPICINFO{author="ProjectContributor" comment="" date="1437150509" format="1.1"  version="1"}%
 ---+!! %TOPIC%
+%SHORTDESCRIPTION%
+
 %TOC%
 
 ---++ Description
@@ -239,19 +241,15 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 }
 </style>
 
----++ Plugin Installation Instructions
+---++ Installation Instructions
 %$INSTALL_INSTRUCTIONS%
 
----++ Plugin Info
-<!-- 
-   * Set SHORTDESCRIPTION = Substitute and extract information from content by using regular expressions
--->
-|  Plugin Author: | Michael Daum |
-|  Copyright &copy;: | 2005-2015, Michael Daum http://michaeldaumconsulting.com |
-|  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Release: | %$RELEASE% |
-|  Version: | %$VERSION% |
-|  Change History: | <!-- versions below in reverse order -->&nbsp; |
+---++ Dependencies
+%$DEPENDENCIES%
+
+---++ Change History
+
+%TABLE{columnwidths="7em" tablewidth="100%"}%
 |  31 Aug 2015: | fixing deprecated unescaped left brace in regexes |
 |  17 Jul 2015: | fixed compatibility with Foswiki-2.x |
 |  10 Apr 2014: | transliterate/normalize unicode strings before sorting them in MAKETEXT |
@@ -300,8 +298,17 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 |  06 Dec 2005: | fixed SUBST not to cut off the rest of the text |
 |  09 Nov 2005: | fixed deep recursion using =expand="on"= |
 |  22 Aug 2005: | Initial version; added =expand= toggle |
-|  Dependency: | $Foswiki::Plugins::VERSION 1.024 |
-|  CPAN Dependencies: | none |
-|  Other Dependencies: | none |
-|  Plugin Home: | Foswiki:Extensions/%TOPIC% |
-|  Support: | Foswiki:Support/%TOPIC% |
+
+<!-- 
+   * Set SHORTDESCRIPTION = %$SHORTDESCRIPTION%
+-->
+
+%META:FORM{name="PackageForm"}%
+%META:FIELD{name="Author" title="Author" value="Michael Daum"}%
+%META:FIELD{name="Copyright" title="Copyright" value="2005-2015, Michael Daum http://michaeldaumconsulting.com"}%
+%META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%TOPIC%"}%
+%META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
+%META:FIELD{name="Release" title="Release" value="%$RELEASE%"}%
+%META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/FilterPlugin"}%
+%META:FIELD{name="Support" title="Support" value="Foswiki:Support/%TOPIC%"}%
+%META:FIELD{name="Version" title="Version" value="%$VERSION%"}%
