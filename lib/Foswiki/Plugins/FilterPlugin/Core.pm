@@ -426,7 +426,7 @@ sub handleMakeIndex {
         # create an anchor to this group
         my $anchor = '';
         if ($theGroup =~ /\$anchor/) {
-          $anchor = $this->getAnchorName($group);
+          $anchor = $this->getAnchorName(transliterate($group, \%map));
           if ($anchor)  {
             push @anchors, {
               name=>$anchor,
@@ -755,12 +755,14 @@ sub transliterate {
 
   # apply own decoding if present
   if ($map) {
+    my $found = 0;
     foreach my $pattern (keys %$map) {
       my $replace = $map->{$pattern} || ''; 
       if ($string =~ s/$pattern/$replace/g) {
-        return $string;
+        $found = 1;
       }
     }
+    return $string if $found;
   }
 
   $string = Text::Unidecode::unidecode($string);
