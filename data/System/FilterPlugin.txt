@@ -1,6 +1,6 @@
-%META:TOPICINFO{author="ProjectContributor" comment="" date="1437150509" format="1.1"  version="1"}%
+%META:TOPICINFO{author="ProjectContributor" comment="" date="1461153006" format="1.1"  version="1"}%
 ---+!! %TOPIC%
-%SHORTDESCRIPTION%
+%FORMFIELD{"Description"}%
 
 %TOC%
 
@@ -122,10 +122,13 @@ parameters:
    * reverse="on/off": reverse the list (default "off")
    * header="...": format string to prepend to the result
    * footer="..." format string to be appended to the result
+   * transliterate="on/off/&lt;mapping>" influences the way sorting and grouping is handled: 
+    either a boolean switch to enable/disable decoding unicodes into their neares latin character (using CPAN:Text::Unidecode),
+    or a custom mapping list ="&lt;source1>=&lt;target1>, &lt;source2>=&lt;target2>, ..."= to map a source string to a given target string (default "on")
 
 Like in FORMATLIST the =format= parameter can make use of =$1=, =$2=, ... variables
 to match the groupings defined in the =pattern= argument (like in =pattern="(.*);(.*);(.*)"=) .
-The first matched grouping $1 will be used as the $item to sort the list.
+The first matched grouping $1 will be used as the $item to sort the list and is optionally being transliterated.
 
 In addition =header= and =footer= might contain the =$anchors= variable which will expand
 to a navigation to jump to the groups within the index.
@@ -250,6 +253,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  20 Apr 2016: | added =transliterate= parameter, including custom mappings; upgraded Text::Unidecode fallback shipped with this plugin |
 |  31 Aug 2015: | fixing deprecated unescaped left brace in regexes |
 |  17 Jul 2015: | fixed compatibility with Foswiki-2.x |
 |  10 Apr 2014: | transliterate/normalize unicode strings before sorting them in MAKETEXT |
@@ -299,13 +303,10 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 |  09 Nov 2005: | fixed deep recursion using =expand="on"= |
 |  22 Aug 2005: | Initial version; added =expand= toggle |
 
-<!-- 
-   * Set SHORTDESCRIPTION = %$SHORTDESCRIPTION%
--->
-
 %META:FORM{name="PackageForm"}%
 %META:FIELD{name="Author" title="Author" value="Michael Daum"}%
-%META:FIELD{name="Copyright" title="Copyright" value="2005-2015, Michael Daum http://michaeldaumconsulting.com"}%
+%META:FIELD{name="Copyright" title="Copyright" value="2005-2016, Michael Daum http://michaeldaumconsulting.com"}%
+%META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
 %META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%TOPIC%"}%
 %META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
 %META:FIELD{name="Release" title="Release" value="%$RELEASE%"}%

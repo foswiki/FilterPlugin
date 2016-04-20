@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2005-2015 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2005-2016 Michael Daum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -77,7 +77,7 @@ sub handleFilter {
   my $theFooter = $params->{footer} || '';
   my $theLimit = $params->{limit} || $params->{hits} || 100000; 
   my $theSkip = $params->{skip} || 0;
-  my $theExpand = $params->{expand} || 'on';
+  my $theExpand = Foswiki::Func::isTrue($params->{expand}, 1);
   my $theSeparator = $params->{separator};
   my $theExclude = $params->{exclude} || '';
   my $theInclude = $params->{include} || '';
@@ -106,7 +106,7 @@ sub handleFilter {
     }
     if ($text =~ /%STARTINCLUDE%(.*)%STOPINCLUDE%/gs) {
       $text = $1;
-      if ($theExpand eq 'on') {
+      if ($theExpand) {
 	$text = Foswiki::Func::expandCommonVariables($text);
 	$text = Foswiki::Func::renderText($text);
       }
@@ -169,7 +169,7 @@ sub handleFilter {
 	@result = sort {$a <=> $b} @result;
       }
     }
-    @result = reverse @result if $theReverse eq 'on';
+    @result = reverse @result if $theReverse;
     $result = join($theSeparator, @result);
   } elsif ($theMode == 1) {
     # substitution mode
@@ -257,21 +257,32 @@ sub handleMakeIndex {
   my $theSplit = $params->{split};
   $theSplit = '\s*,\s*' unless defined $theSplit;
 
-  my $theUnique = $params->{unique} || '';
+  my $theUnique = Foswiki::Func::isTrue($params->{unique}, 0);
   my $theExclude = $params->{exclude} || '';
   my $theInclude = $params->{include} || '';
-  my $theReverse = $params->{reverse} || '';
+  my $theReverse = Foswiki::Func::isTrue($params->{reverse}, 0);
   my $thePattern = $params->{pattern} || '';
   my $theHeader = $params->{header} || '';
   my $theFooter = $params->{footer} || '';
   my $theGroup = $params->{group};
   my $theAnchorThreshold = $params->{anchorthreshold} || 0;
+  my $theTransliterate = $params->{transliterate};
 
+  my %map = ();
+  if (defined $theTransliterate) {
+    if ($theTransliterate =~ /^on|yes|true|1$/) {
+      $theTransliterate = 1;
+    } elsif ($theTransliterate =~ /^off|no|false|0$/) {
+      $theTransliterate = 0;
+    }  else {
+      %map = map {$_ =~ /^(.*)=(.*)$/, $1=>$2} split(/\s*,\s*/, $theTransliterate);
+      $theTransliterate = 1;
+    }
+  }
 
   # sanitize params
   $theAnchorThreshold =~ s/[^\d]//go;
   $theAnchorThreshold = 0 unless $theAnchorThreshold;
-  $theUnique = ($theUnique eq 'on')?1:0;
   $theGroup = " \$anchor<h3>\$group</h3>\n" unless defined $theGroup;
 
   $theFormat = '$item' unless defined $theFormat;
@@ -304,7 +315,8 @@ sub handleMakeIndex {
       $seen{$item} = 1;
     }
 
-    my $crit = Text::Unidecode::unidecode($item);
+    my $crit = $item;
+    $crit = transliterate($crit, \%map) if $theTransliterate;
     if ($crit =~ /\((.*?)\)/) {
       $crit = $1;
     }
@@ -369,7 +381,7 @@ sub handleMakeIndex {
   # sort it
   @theList = sort {$a->{crit} cmp $b->{crit}} @theList if $theSort =~ /nocase|on/;
   @theList = sort {$a->{crit} <=> $b->{crit}} @theList if $theSort eq 'num';
-  @theList = reverse @theList if $theReverse eq 'on';
+  @theList = reverse @theList if $theReverse;
 
   my $result = "<table class='fltLayoutTable' cellspacing='0' cellpadding='0'>\n<tr>\n";
 
@@ -522,10 +534,10 @@ sub handleFormatList {
   my $theLimit = $params->{limit};
   my $theSkip = $params->{skip} || 0; 
   my $theSort = $params->{sort} || 'off';
-  my $theUnique = $params->{unique} || '';
+  my $theUnique = Foswiki::Func::isTrue($params->{unique}, 0);
   my $theExclude = $params->{exclude} || '';
   my $theInclude = $params->{include} || '';
-  my $theReverse = $params->{reverse} || '';
+  my $theReverse = Foswiki::Func::isTrue($params->{reverse}, 0);
   my $theSelection = $params->{selection};
   my $theMarker = $params->{marker};
   my $theMap = $params->{map};
@@ -595,7 +607,7 @@ sub handleFormatList {
       @theList = sort {$a <=> $b} @theList;
     }
   }
-  @theList = reverse @theList if $theReverse eq 'on';
+  @theList = reverse @theList if $theReverse;
 
   my $count = 0;
   my $hits = 0;
@@ -662,7 +674,7 @@ sub handleFormatList {
       $line =~ s/\$9/$arg9/g;
       $line =~ s/\$map\((.*?)\)/($map{$1}||$1)/ge;
       #writeDebug("after susbst '$line'");
-      if ($theUnique eq 'on') {
+      if ($theUnique) {
         next if $seen{$line};
         $seen{$line} = 1;
       }
@@ -735,6 +747,20 @@ sub expandVariables {
   $_[0] = $text if $found;
 
   return $found;
+}
+
+###############################################################################
+sub transliterate {
+  my ($string, $map) = @_;
+
+  # apply own decoding if present
+  if ($map) {
+    $string =~ s/(.)/$map->{$1}||$1/ge;
+  }
+
+  $string = Text::Unidecode::unidecode($string);
+
+  return $string;
 }
 
 ###############################################################################
