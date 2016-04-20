@@ -755,7 +755,12 @@ sub transliterate {
 
   # apply own decoding if present
   if ($map) {
-    $string =~ s/(.)/$map->{$1}||$1/ge;
+    foreach my $pattern (keys %$map) {
+      my $replace = $map->{$pattern} || ''; 
+      if ($string =~ s/$pattern/$replace/g) {
+        return $string;
+      }
+    }
   }
 
   $string = Text::Unidecode::unidecode($string);
