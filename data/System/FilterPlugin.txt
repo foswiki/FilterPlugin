@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" comment="" date="1461153006" format="1.1"  version="1"}%
+%META:TOPICINFO{author="ProjectContributor" comment="" date="1461935878" format="1.1"  version="1"}%
 ---+!! %TOPIC%
 %FORMFIELD{"Description"}%
 
@@ -253,6 +253,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  29 Apr 2016: | don't fallback to unidecode if an explicit mapping is given; don't use Foswiki's internal anchor creator as it does not support unicode |
 |  20 Apr 2016: | added =transliterate= parameter, including custom mappings; upgraded Text::Unidecode fallback shipped with this plugin |
 |  31 Aug 2015: | fixing deprecated unescaped left brace in regexes |
 |  17 Jul 2015: | fixed compatibility with Foswiki-2.x |

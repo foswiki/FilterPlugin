@@ -316,10 +316,11 @@ sub handleMakeIndex {
     }
 
     my $crit = $item;
-    $crit = transliterate($crit, \%map) if $theTransliterate;
     if ($crit =~ /\((.*?)\)/) {
       $crit = $1;
     }
+    $crit = transliterate($crit, \%map) if $theTransliterate;
+
     if ($theSort eq 'nocase') {
       $crit = uc($crit);
     }
@@ -426,7 +427,7 @@ sub handleMakeIndex {
         # create an anchor to this group
         my $anchor = '';
         if ($theGroup =~ /\$anchor/) {
-          $anchor = $this->getAnchorName(transliterate($group, \%map));
+          $anchor = $this->getAnchorName($theTransliterate?transliterate($group, \%map):$group);
           if ($anchor)  {
             push @anchors, {
               name=>$anchor,
@@ -714,17 +715,12 @@ sub handleFormatList {
 sub getAnchorName {
   my ($this, $text) = @_;
 
-  $text = $text.'_'.$this->{makeIndexCounter};
-  return '' if $this->{seenAnchorNames}{$text};
-  $this->{seenAnchorNames}{$text} = 1;
+  my $anchor = substr($text, 0, 1);
+  $anchor = $anchor.'_'.$this->{makeIndexCounter};
+  return '' if $this->{seenAnchorNames}{$anchor};
+  $this->{seenAnchorNames}{$anchor} = 1;
 
-  if ($Foswiki::Plugins::VERSION > 2.0) {
-    require Foswiki::Render::Anchors;
-    my $anchor = Foswiki::Render::Anchors::make($text);
-    return Foswiki::urlEncode($anchor);
-  } else {
-    return $this->{session}->renderer->makeAnchorName($text);
-  }
+  return $anchor;
 }
 
 ###############################################################################
@@ -758,14 +754,14 @@ sub transliterate {
     my $found = 0;
     foreach my $pattern (keys %$map) {
       my $replace = $map->{$pattern} || ''; 
-      if ($string =~ s/$pattern/$replace/g) {
+      if ($string =~ s/^$pattern/$replace/g) {
         $found = 1;
       }
     }
     return $string if $found;
+  } else {
+    $string = Text::Unidecode::unidecode($string);
   }
-
-  $string = Text::Unidecode::unidecode($string);
 
   return $string;
 }
