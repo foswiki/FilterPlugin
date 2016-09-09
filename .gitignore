@@ -1,9 +1,9 @@
 *.swp
 *,v
-FilterPlugin.md5
-FilterPlugin.sha1
-FilterPlugin.tgz
-FilterPlugin.txt
-FilterPlugin.zip
-FilterPlugin_installer
-FilterPlugin_installer.pl
+/FilterPlugin.md5
+/FilterPlugin.sha1
+/FilterPlugin.tgz
+/FilterPlugin.txt
+/FilterPlugin.zip
+/FilterPlugin_installer
+/FilterPlugin_installer.pl

@@ -96,8 +96,9 @@ The pattern string shall group matching substrings in the list item to which
 you can refer to by using $1, $2, ... in the format string. Any format string
 (=format=, =header=, =footer=) may contain variables =$percnt$=, =$nop=,
 =$dollar= and =$n=. The variable =$index= referse to the position number within
-the list being formatted; =$count= refers to the total number of matched list
-elementsr;=$marker= is set if the =selection= regular expression matches the
+the list being formatted; =$hits= refers to the total number of matched list
+elements; =$count= expands to the total number of elements in the list; 
+=$marker= is set if the =selection= regular expression matches the
 current item. The =$map(key)= macro returns the value for "key" as specified in
 the =map= argument.
 
@@ -253,6 +254,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  05 Sep 2016: | added =$hits= to FORMATLIST to distinguish it from =$count= and =$index= |
 |  29 Apr 2016: | don't fallback to unidecode if an explicit mapping is given; don't use Foswiki's internal anchor creator as it does not support unicode |
 |  20 Apr 2016: | added =transliterate= parameter, including custom mappings; upgraded Text::Unidecode fallback shipped with this plugin |
 |  31 Aug 2015: | fixing deprecated unescaped left brace in regexes |

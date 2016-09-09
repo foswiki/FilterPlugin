@@ -610,7 +610,7 @@ sub handleFormatList {
   }
   @theList = reverse @theList if $theReverse;
 
-  my $count = 0;
+  my $index = 0;
   my $hits = 0;
   my @result;
 
@@ -623,8 +623,8 @@ sub handleFormatList {
       next if $theInclude && $item !~ /^($theInclude)$/;
       next if $item =~ /^$/; # skip empty elements
 
-      $count++;
-      next if $count <= $theSkip;
+      $index++;
+      next if $index <= $theSkip;
       last if $theLimit > 0 && $hits >= $theLimit;
 
       my $arg1 = '';
@@ -680,7 +680,7 @@ sub handleFormatList {
         $seen{$line} = 1;
       }
 
-      $line =~ s/\$index/$count/ge;
+      $line =~ s/\$index/$index/ge;
       if ($theSelection && $item =~ /$theSelection/) {
         $line =~ s/\$marker/$theMarker/g 
       } else {
@@ -696,7 +696,7 @@ sub handleFormatList {
     return '' unless $theNullFormat;
     $result = $theNullFormat;
   } else {
-    if (defined($theLastSeparator) && ($count > 1)) {
+    if (defined($theLastSeparator) && ($index > 1)) {
       my $lastElement = pop(@result);
       $result = join($theSeparator, @result) . $theLastSeparator . $lastElement;
     } else {
@@ -704,8 +704,11 @@ sub handleFormatList {
     }
   }
 
+  my $count = scalar(@theList);
+
   $result = $theHeader.$result.$theFooter;
-  $result =~ s/\$count/$hits/g;
+  $result =~ s/\$hits/$hits/g;
+  $result =~ s/\$count/$count/g;
 
   expandVariables($result);
   return $result;
