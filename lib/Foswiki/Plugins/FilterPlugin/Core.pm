@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2005-2016 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2005-2017 Michael Daum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -20,7 +20,6 @@ package Foswiki::Plugins::FilterPlugin::Core;
 use strict;
 use warnings;
 
-use POSIX qw(ceil);
 use Foswiki::Plugins();
 use Foswiki::Func();
 use Text::Unidecode();
@@ -39,6 +38,9 @@ sub new {
     makeIndexCounter => 0,
     filteredTopic => {},
   }, $class);
+
+  Foswiki::Func::addToZone('head', 'FILTERPLUGIN',
+   '<link rel="stylesheet" type="text/css" href="%PUBURL%/%SYSTEMWEB%/FilterPlugin/filter.css" media="all" />');
 
   return $this;
 }
@@ -251,8 +253,8 @@ sub handleMakeIndex {
 
   #writeDebug("### called handleMakeIndex(".$params->stringify.")");
   my $theList = $params->{_DEFAULT} || $params->{list} || '';
-  my $theCols = $params->{cols} || 3;
   my $theFormat = $params->{format};
+  my $theCols = $params->{cols} || 3;
   my $theSort = $params->{sort} || 'on';
   my $theSplit = $params->{split};
   $theSplit = '\s*,\s*' unless defined $theSplit;
@@ -267,6 +269,8 @@ sub handleMakeIndex {
   my $theGroup = $params->{group};
   my $theAnchorThreshold = $params->{anchorthreshold} || 0;
   my $theTransliterate = $params->{transliterate};
+  my $theSeparator = $params->{separator};
+  $theSeparator = "\n" unless defined $theSeparator;
 
   my %map = ();
   if (defined $theTransliterate) {
@@ -283,14 +287,9 @@ sub handleMakeIndex {
   # sanitize params
   $theAnchorThreshold =~ s/[^\d]//go;
   $theAnchorThreshold = 0 unless $theAnchorThreshold;
-  $theGroup = " \$anchor<h3>\$group</h3>\n" unless defined $theGroup;
+  $theGroup = "<h3 \$anchor'>\$group</h3>" unless defined $theGroup;
 
   $theFormat = '$item' unless defined $theFormat;
-
-  my $maxCols = $theCols;
-  $maxCols =~ s/[^\d]//go;
-  $maxCols = 3 if $maxCols eq '';
-  $maxCols = 1 if $maxCols < 1;
 
   # compute the list
   $theList = Foswiki::Func::expandCommonVariables($theList, $theTopic, $theWeb)
@@ -384,107 +383,62 @@ sub handleMakeIndex {
   @theList = sort {$a->{crit} <=> $b->{crit}} @theList if $theSort eq 'num';
   @theList = reverse @theList if $theReverse;
 
-  my $result = "<table class='fltLayoutTable' cellspacing='0' cellpadding='0'>\n<tr>\n";
-
-  # - a col should at least contain a single group letter and one additional row 
-  my $colSize = ceil($listSize / $maxCols);
-  #writeDebug("maxCols=$maxCols, colSize=$colSize, listSize=$listSize");
-
-  my $listIndex = 0;
-  my $insideList = 0;
-  my $itemIndex = 0;
+  my $index = 0;
   my $group = '';
   my @anchors = ();
 
-  foreach my $colIndex (1..$maxCols) {
-    $result .= "  <td valign='top'>\n";
+  my @result;
+  foreach my $descriptor (@theList) {
+    my $format = $descriptor->{format};
+    my $item = $descriptor->{item};
+    #writeDebug("index=$indexformat");
 
-    #writeDebug("new col");
-    my $rowIndex = 1;
-    while (1) {
-      my $descriptor = $theList[$listIndex];
-      my $format = $$descriptor{format};
-      my $item = $$descriptor{item};
-      #writeDebug("listIndex=$listIndex, itemIndex=$itemIndex, colIndex=$colIndex, rowIndex=$rowIndex, item=$item, format=$format");
+    # construct group format
+    my $thisGroup = $descriptor->{group};
+    my $groupFormat = '';
+    if ($theGroup && $group ne $thisGroup) {
+      $group = $thisGroup;
 
-      # construct group format
-      my $thisGroup = $$descriptor{group};
-      my $cont = '';
-      if (($theGroup && $group ne $thisGroup) || $rowIndex == 1) {
-        #last if $itemIndex % $colSize < 2 && $colIndex < $maxCols; # prevent schusterjunge
-
-        if ($thisGroup eq $group && $rowIndex == 1) {
-          $cont = " <span class='fltCont'>(cont.)</span>";
-        } else {
-          $group = $thisGroup;
-        }
-
-        if ($insideList) {
-          $result .= "</ul>\n";
-          $insideList = 0;
-        }
-
-        # create an anchor to this group
-        my $anchor = '';
-        if ($theGroup =~ /\$anchor/) {
-          $anchor = $this->getAnchorName($theTransliterate?transliterate($group, \%map):$group);
-          if ($anchor)  {
-            push @anchors, {
-              name=>$anchor,
-              title=>$group,
+      # create an anchor to this group
+      my $anchor = '';
+      if ($theGroup =~ /\$anchor/) {
+        $anchor = $this->getAnchorName($theTransliterate ? transliterate($group, \%map) : $group);
+        if ($anchor) {
+          push @anchors,
+            {
+            name => $anchor,
+            title => $group,
             };
-            $anchor = "<a class='fltAnchor' name='$anchor'></a>";
-          }
+          $anchor = "id='$anchor'";
         }
-
-        my $groupFormat = $theGroup;
-        expandVariables($groupFormat,
-          anchor=>$anchor,
-          group=>$group,
-          cont=>$cont,
-          index=>$listIndex+1,
-          count=>$listSize,
-          col=>$colIndex,
-          row=>$rowIndex,
-          item=>$item,
-        );
-        $result .= $groupFormat;
       }
 
-      # construct line
-      my $text = "  <li>$format</li>\n";
-      expandVariables($text,
-        group=>$group,
-        cont=>'',
-        index=>$listIndex+1,
-        count=>$listSize,
-        col=>$colIndex,
-        row=>$rowIndex,
-        item=>$item,
+      $groupFormat = $theGroup;
+      expandVariables(
+        $groupFormat,
+        anchor => $anchor,
+        group => $group,
+        index => $index + 1,
+        count => $listSize,
+        item => $item,
       );
-
-      unless ($insideList) {
-        $insideList = 1;
-        $result .= "  <ul>\n";
-      }
-
-      # add to result
-      $result .= $text;
-
-      # keep track if indexes
-      $listIndex++;
-      $itemIndex++;
-      $rowIndex++;
-      last unless $itemIndex % $colSize && $listIndex < $listSize;
     }
-    if ($insideList) {
-      $result .= "  </ul>\n";
-      $insideList = 0;
-    }
-    $result .= "</td>\n";
-    last unless $listIndex < $listSize;
+    # construct line
+    my $text = $format;
+    expandVariables(
+      $text,
+      group => $group,
+      index => $index + 1,
+      count => $listSize,
+      item => $item,
+    );
+
+    # add to result
+    push @result, "<div class='fltMakeIndexItem'>$groupFormat$text</div>";
+
+    # keep track if indexes
+    $index++;
   }
-  $result .= "</tr>\n</table>";
 
   my $anchors = '';
   if (@anchors > $theAnchorThreshold) {
@@ -501,12 +455,15 @@ sub handleMakeIndex {
   expandVariables($theHeader, count=>$listSize, anchors=>$anchors);
   expandVariables($theFooter, count=>$listSize, anchors=>$anchors);
 
-  $result = 
+  my $result = 
     "<div class='fltMakeIndexWrapper'>".
       $theHeader.
-      $result.
+      "<div class='fltMakeIndexContainer' style='column-count:$theCols'>".
+      join($theSeparator, @result).
+      "</div>".
       $theFooter.
     "</div>";
+
   #writeDebug("result=$result");
 
   # count MAKEINDEX calls

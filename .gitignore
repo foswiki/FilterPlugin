@@ -1,3 +1,5 @@
+*.gz
+attic
 *.swp
 *,v
 /FilterPlugin.md5
@@ -7,3 +9,4 @@
 /FilterPlugin.zip
 /FilterPlugin_installer
 /FilterPlugin_installer.pl
+pub/System/FilterPlugin/filter.css

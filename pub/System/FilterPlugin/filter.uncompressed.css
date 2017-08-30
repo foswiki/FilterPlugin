@@ -1,0 +1,42 @@
+.fltMakeIndexWrapper {
+  margin:1em 0;
+}
+.foswikiFormSteps .fltMakeIndexWrapper {
+  margin:0;
+}
+.fltAnchors {
+  margin:1.5em 0;
+}
+.fltMakeIndexWrapper .fltAnchors a {
+  padding:0.1em 0.2em;
+  margin:0;
+}
+.fltMakeIndexWrapper h2 {
+  margin-top:0;
+}
+.fltMakeIndexWrapper h3 {
+  font-weight:bold;
+  border:0;
+  margin:0.65em 0 0.5em;
+  padding:0;
+}
+.fltMakeIndexContainer {
+  column-gap: 1.5em;
+  column-count: 3;
+  column-width: 13em;
+}
+.fltMakeIndexItem {
+  -webkit-column-break-inside:avoid;
+  -moz-column-break-inside:avoid;
+  -o-column-break-inside:avoid;
+  -ms-column-break-inside:avoid;
+  column-break-inside:avoid;
+  page-break-inside: avoid;           /* Theoretically FF 20+ */
+  break-inside: avoid-column;         /* IE 11 */
+  display:table;
+  width:100%;
+}
+.fltMakeIndexWrapper .foswikiTopicInfo {
+  margin:0;
+}
+
