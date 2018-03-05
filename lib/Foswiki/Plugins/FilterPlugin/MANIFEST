@@ -260,6 +260,7 @@ lib/CPAN/lib/Text/Unidecode/xff.pm 0644
 lib/Foswiki/Plugins/FilterPlugin/Core.pm 0644
 lib/Foswiki/Plugins/FilterPlugin/DEPENDENCIES 0644
 lib/Foswiki/Plugins/FilterPlugin.pm 0644
+pub/System/FilterPlugin/Makefile 0644
 pub/System/FilterPlugin/filter.css 0644
 pub/System/FilterPlugin/filter.uncompressed.css 0644
 pub/System/FilterPlugin/filter.css.gz 0644

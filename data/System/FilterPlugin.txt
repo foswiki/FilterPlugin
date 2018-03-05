@@ -254,6 +254,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  05 Mar 2018: | css fixes for MAKEINDEX |
 |  30 Aug 2017: | rewrite MAKEINDEX from using tables to css3 multicolumn |
 |  05 Sep 2016: | added =$hits= to FORMATLIST to distinguish it from =$count= and =$index= |
 |  29 Apr 2016: | don't fallback to unidecode if an explicit mapping is given; don't use Foswiki's internal anchor creator as it does not support unicode |
@@ -309,7 +310,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 
 %META:FORM{name="PackageForm"}%
 %META:FIELD{name="Author" title="Author" value="Michael Daum"}%
-%META:FIELD{name="Copyright" title="Copyright" value="2005-2017, Michael Daum http://michaeldaumconsulting.com"}%
+%META:FIELD{name="Copyright" title="Copyright" value="2005-2018, Michael Daum http://michaeldaumconsulting.com"}%
 %META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
 %META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%TOPIC%"}%
 %META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
