@@ -164,11 +164,26 @@ sub handleFilter {
       $hits--;
       last if $theLimit > 0 && $hits <= 0;
     }
+
     if ($theSort ne 'off') {
+      my $isNumeric;
+      my %sorting = ();
       if ($theSort eq 'alpha' || $theSort eq 'on') {
-	@result = sort {uc($a) cmp uc($b)} @result;
+        %sorting = map {$_ => uc($_)} @result;
+        $isNumeric = 0;
       } elsif ($theSort eq 'num') {
-	@result = sort {$a <=> $b} @result;
+        %sorting = map {my $num = $_; $num =~ s/[^0-9\.]//g; $_ => $num} @result;
+        $isNumeric = 1;
+      } elsif ($theSort eq 'random') {
+        %sorting = map {$_ => rand()} @result;
+        $isNumeric = 1;
+      }
+      if (defined $isNumeric) {
+        if ($isNumeric) {
+          @result = sort { $sorting{$a} <=> $sorting{$b} } @result;
+        } else {
+          @result = sort { $sorting{$a} cmp $sorting{$b} } @result;
+        }
       }
     }
     @result = reverse @result if $theReverse;
@@ -563,6 +578,27 @@ sub handleFormatList {
       @theList = sort {uc($a) cmp uc($b)} @theList;
     } elsif ($theSort eq 'num') {
       @theList = sort {$a <=> $b} @theList;
+    }
+  }
+  if ($theSort ne 'off') {
+    my $isNumeric;
+    my %sorting = ();
+    if ($theSort eq 'alpha' || $theSort eq 'on') {
+      %sorting = map {$_ => uc($_)} @theList;
+      $isNumeric = 0;
+    } elsif ($theSort eq 'num') {
+      %sorting = map {my $num = $_; $num =~ s/[^0-9\.]//g; $_ => $num} @theList;
+      $isNumeric = 1;
+    } elsif ($theSort eq 'random') {
+      %sorting = map {$_ => rand()} @theList;
+      $isNumeric = 1;
+    }
+    if (defined $isNumeric) {
+      if ($isNumeric) {
+        @theList = sort { $sorting{$a} <=> $sorting{$b} } @theList;
+      } else {
+        @theList = sort { $sorting{$a} cmp $sorting{$b} } @theList;
+      }
     }
   }
   @theList = reverse @theList if $theReverse;

@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" comment="" date="1461935878" format="1.1"  version="1"}%
+%META:TOPICINFO{author="ProjectContributor" comment="" date="1528717942" format="1.1"  version="1"}%
 ---+!! %TOPIC%
 %FORMFIELD{"Description"}%
 
@@ -254,6 +254,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  01 Jun 2018: | improved sorting of lists, i.e. with numeric values |
 |  05 Mar 2018: | css fixes for MAKEINDEX |
 |  30 Aug 2017: | rewrite MAKEINDEX from using tables to css3 multicolumn |
 |  05 Sep 2016: | added =$hits= to FORMATLIST to distinguish it from =$count= and =$index= |
