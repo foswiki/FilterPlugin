@@ -172,7 +172,7 @@ sub handleFilter {
         %sorting = map {$_ => uc($_)} @result;
         $isNumeric = 0;
       } elsif ($theSort eq 'num') {
-        %sorting = map {my $num = $_; $num =~ s/[^0-9\.]//g; $_ => $num} @result;
+        %sorting = map {my $item = $_; my $num = ($item =~ /([+-]?\d+(?:\.\d+)?)/ ? $1:0) ; $item => $num} @result;
         $isNumeric = 1;
       } elsif ($theSort eq 'random') {
         %sorting = map {$_ => rand()} @result;
@@ -269,7 +269,9 @@ sub handleMakeIndex {
   #writeDebug("### called handleMakeIndex(".$params->stringify.")");
   my $theList = $params->{_DEFAULT} || $params->{list} || '';
   my $theFormat = $params->{format};
-  my $theCols = $params->{cols} || 3;
+  my $theCols = $params->{cols} || "automatic";
+  my $theColWidth = $params->{colwidth};
+  my $theColGap = $params->{colgap};
   my $theSort = $params->{sort} || 'on';
   my $theSplit = $params->{split};
   $theSplit = '\s*,\s*' unless defined $theSplit;
@@ -300,7 +302,7 @@ sub handleMakeIndex {
   }
 
   # sanitize params
-  $theAnchorThreshold =~ s/[^\d]//go;
+  $theAnchorThreshold =~ s/[^\d]//g;
   $theAnchorThreshold = 0 unless $theAnchorThreshold;
   $theGroup = "<h3 \$anchor'>\$group</h3>" unless defined $theGroup;
 
@@ -317,9 +319,8 @@ sub handleMakeIndex {
     next if $theExclude && $item =~ /^($theExclude)$/;
     next if $theInclude && $item !~ /^($theInclude)$/;
 
-    $item =~ s/<nop>//go;
-    $item =~ s/^\s+//go;
-    $item =~ s/\s+$//go;
+    $item =~ s/<nop>//g;
+    $item =~ s/^\s+|\s+$//g;
     next unless $item;
 
     #writeDebug("item='$item'");
@@ -338,7 +339,7 @@ sub handleMakeIndex {
     if ($theSort eq 'nocase') {
       $crit = uc($crit);
     }
-    #$crit =~ s/[^$Foswiki::regex{'mixedAlphaNum'}]//go;
+    #$crit =~ s/[^$Foswiki::regex{'mixedAlphaNum'}]//g;
 
     my $group = $crit;
     $group = substr($crit, 0, 1) unless $theSort eq 'num';
@@ -470,10 +471,16 @@ sub handleMakeIndex {
   expandVariables($theHeader, count=>$listSize, anchors=>$anchors);
   expandVariables($theFooter, count=>$listSize, anchors=>$anchors);
 
+  my @styles = ();
+  push @styles, "column-count:$theCols" if $theCols && $theCols ne "automatic";
+  push @styles, "column-width:$theColWidth" if $theColWidth;
+  push @styles, "column-gap:$theColGap" if $theColGap;
+  my $styles = @styles ? "style='".join(";", @styles)."'" : "";
+
   my $result = 
     "<div class='fltMakeIndexWrapper'>".
       $theHeader.
-      "<div class='fltMakeIndexContainer' style='column-count:$theCols'>".
+      "<div class='fltMakeIndexContainer' $styles>".
       join($theSeparator, @result).
       "</div>".
       $theFooter.
@@ -491,7 +498,7 @@ sub handleMakeIndex {
 sub handleFormatList {
   my ($this, $params, $theTopic, $theWeb) = @_;
  
-  writeDebug("handleFormatList(".$params->stringify().")");
+  #writeDebug("handleFormatList()");
 
   my $theList = $params->{_DEFAULT};
   $theList = $params->{list} unless defined $theList;
@@ -574,20 +581,13 @@ sub handleFormatList {
   }
 
   if ($theSort ne 'off') {
-    if ($theSort eq 'alpha' || $theSort eq 'on') {
-      @theList = sort {uc($a) cmp uc($b)} @theList;
-    } elsif ($theSort eq 'num') {
-      @theList = sort {$a <=> $b} @theList;
-    }
-  }
-  if ($theSort ne 'off') {
     my $isNumeric;
     my %sorting = ();
     if ($theSort eq 'alpha' || $theSort eq 'on') {
       %sorting = map {$_ => uc($_)} @theList;
       $isNumeric = 0;
     } elsif ($theSort eq 'num') {
-      %sorting = map {my $num = $_; $num =~ s/[^0-9\.]//g; $_ => $num} @theList;
+      %sorting = map {my $item = $_; my $num = ($item =~ /([+-]?\d+(?:\.\d+)?)/ ? $1:0) ; $item => $num} @theList;
       $isNumeric = 1;
     } elsif ($theSort eq 'random') {
       %sorting = map {$_ => rand()} @theList;
@@ -677,7 +677,7 @@ sub handleFormatList {
       if ($theSelection && $item =~ /$theSelection/) {
         $line =~ s/\$marker/$theMarker/g 
       } else {
-        $line =~ s/\$marker//go;
+        $line =~ s/\$marker//g;
       }
       push @result, $line unless ($theHideEmpty && $line eq '');
       $hits++;
@@ -731,10 +731,10 @@ sub expandVariables {
     $found = 1 if $text =~ s/\$$key\b/$params{$key}/g;
   }
 
-  $found = 1 if $text =~ s/\$perce?nt/\%/go;
-  $found = 1 if $text =~ s/\$nop//go;
-  $found = 1 if $text =~ s/\$n/\n/go;
-  $found = 1 if $text =~ s/\$dollar/\$/go;
+  $found = 1 if $text =~ s/\$perce?nt/\%/g;
+  $found = 1 if $text =~ s/\$nop//g;
+  $found = 1 if $text =~ s/\$n/\n/g;
+  $found = 1 if $text =~ s/\$dollar/\$/g;
 
   $_[0] = $text if $found;
 

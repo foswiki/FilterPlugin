@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" comment="" date="1528717942" format="1.1"  version="1"}%
+%META:TOPICINFO{author="micha" comment="" date="1539015994" format="1.1" version="2"}%
 ---+!! %TOPIC%
 %FORMFIELD{"Description"}%
 
@@ -114,7 +114,11 @@ parameters:
    * &lt;list>: the list of items
    * split="...": the split expression to separate the &lt;list> into items (default ",")
    * pattern="...": pattern applied to each item (default "(.*)")
-   * cols="...": maximum number of cols to split the list into
+   * cols="...": maximum number of cols to split the list into, defaults to =automatic=, that is the number of columns is specified by =colwidth= and =colgap=; 
+     in general it is better to specify =colwidth= and =colgaph= rather than hard-coding the number of columns; this will let the viewport of the browser/device decide on
+     the number of columns dynamically based on the available space
+   * colwidth="...": maximum width of a column, defaults to 18em
+   * colgap="...": size of gap betweel columns, defaults to 2em
    * format="...": format of each list item (default "$item")
    * sort="on,off,alpha,num,nocase": sort the list (default "on")
    * unique="on/off": removed duplicates (default "off")
@@ -214,9 +218,10 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 
 %MAKEINDEX{
   "Absolute (philosophy), Accident (philosophy), Actualism, Talk:Adam Weishaupt, Alphabet of human thought, Alterity, Analytic philosophy, Analytic-synthetic distinction, Apologism, Bundle theory, Categories (Stoic), Causal chain, Causality, Coherentism, Conscience, Context principle, Contextualism, Cosmology, De dicto and de re, Dialectical monism, Difference (philosophy), Direct reference theory, Discourse ethics, Dualism, Emergentism, Essence, Ethical naturalism, Exemplification, Existentialism, Fatalism, French materialism, Futilitarianism, Hermeneutics, Hypokeimenon, Identity and change, Idolon tribus, Immanent evaluation, Indeterminacy (Philosophy), Individual, Inherence, Kennisbank Filosofie Nederland, Lazy Reason, Mike Lesser, Libertarianism (metaphysics), Logicism, Mad pain and Martian pain, Materialism, Meaning of life, Metakosmia, Metaphysical naturalism, Milesian school, Mind, Monism, Moral imperative, Multiplicity (philosophy), Mystical philosophy of antiquity, Nature (philosophy), Neomodernism, New England Transcendentalists, Nominalism, Non-archimedean time, Non-rigid designator, Object (philosophy), Ontic, Ontological reductionism, Phenomenology, Philosophical realism, Philosophical skepticism, Philosophy, Pluralism (philosophy), Post-structuralism, Postmodern philosophy, Preferentialism Present (time), Problem of universals, Process philosophy, Rational Animal, Rationalist movement, Relativism, Self (philosophy), Solipsism, Species (metaphysics), Specters of Marx, Substance theory, Talk:The Art of Being Right, Truth-value link, Universal (metaphysics), Utilitarianism, Value judgment, World riddle" 
-  cols="3"
   format="[[http://en.wikipedia.org/wiki/$item][$item]]"
   header="$anchors"
+  colwidth="13em"
+  colgaph="1em"
 }%
 
 ---+++ MAKEINDEX example 2: creating an index for a search result
@@ -231,7 +236,6 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
       separator="$n"
       excludetopic="CGI*,*Plugin"
     }%" 
-   cols="2"
    split="\n"
    pattern="(.*);(.*);(.*);(.*)"
    format="<div class='indexItem'>
@@ -254,6 +258,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  08 Oct 2018: | added =colwidth= and =colgap= to %MAKEINDEX; fixed numerical sorting of lists |
 |  01 Jun 2018: | improved sorting of lists, i.e. with numeric values |
 |  05 Mar 2018: | css fixes for MAKEINDEX |
 |  30 Aug 2017: | rewrite MAKEINDEX from using tables to css3 multicolumn |
@@ -311,11 +316,11 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 
 %META:FORM{name="PackageForm"}%
 %META:FIELD{name="Author" title="Author" value="Michael Daum"}%
-%META:FIELD{name="Copyright" title="Copyright" value="2005-2018, Michael Daum http://michaeldaumconsulting.com"}%
+%META:FIELD{name="Version" title="Version" value="%25$VERSION%25"}%
+%META:FIELD{name="Release" title="Release" value="%25$RELEASE%25"}%
 %META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
-%META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%TOPIC%"}%
-%META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
-%META:FIELD{name="Release" title="Release" value="%$RELEASE%"}%
 %META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/FilterPlugin"}%
-%META:FIELD{name="Support" title="Support" value="Foswiki:Support/%TOPIC%"}%
-%META:FIELD{name="Version" title="Version" value="%$VERSION%"}%
+%META:FIELD{name="Copyright" title="Copyright" value="2005-2018, Michael Daum http://michaeldaumconsulting.com"}%
+%META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
+%META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%25TOPIC%25"}%
+%META:FIELD{name="Support" title="Support" value="Foswiki:Support/%25TOPIC%25"}%
