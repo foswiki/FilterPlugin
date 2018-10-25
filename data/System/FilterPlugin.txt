@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="micha" comment="" date="1539015994" format="1.1" version="2"}%
+%META:TOPICINFO{author="ProjectContributor" comment="" date="1540449606" format="1.1" version="1"}%
 ---+!! %TOPIC%
 %FORMFIELD{"Description"}%
 
@@ -21,6 +21,7 @@ the normal versions process a source topic before including it into the current 
 insert a topic by processing its content.
 
    * =topic="..."=: name of the topic text to be processed 
+   * =rev="..."=: revision of the topic to be processed (defaults to latest version)
    * =text="..."=: text to be processed (has got higher precedence than 'topic')
    * =pattern="..."=: pattern to be extracted or substituted 
    * =format="..."=: format expression or pattern substitute 
@@ -258,6 +259,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  25 Oct 2018: | added =rev= param to %SUBST and %EXTRACT |
 |  08 Oct 2018: | added =colwidth= and =colgap= to %MAKEINDEX; fixed numerical sorting of lists |
 |  01 Jun 2018: | improved sorting of lists, i.e. with numeric values |
 |  05 Mar 2018: | css fixes for MAKEINDEX |

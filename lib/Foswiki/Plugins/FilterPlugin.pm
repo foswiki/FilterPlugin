@@ -21,8 +21,8 @@ use warnings;
 
 use Foswiki::Func();
 
-our $VERSION = '5.20';
-our $RELEASE = '15 Oct 2018';
+our $VERSION = '5.30';
+our $RELEASE = '25 Oct 2018';
 our $NO_PREFS_IN_TOPIC = 1;
 our $SHORTDESCRIPTION = 'Substitute and extract information from content by using regular expressions';
 our $core;

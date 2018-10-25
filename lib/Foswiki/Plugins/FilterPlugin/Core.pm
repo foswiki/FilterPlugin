@@ -85,6 +85,7 @@ sub handleFilter {
   my $theInclude = $params->{include} || '';
   my $theSort = $params->{sort} || 'off';
   my $theReverse = $params->{reverse} || '';
+  my $theRev = $params->{rev};
 
   my $thisTopic = $params->{_DEFAULT} || $params->{topic} || $theTopic;
   ($theWeb, $theTopic) = Foswiki::Func::normalizeWebTopicName($theWeb, $thisTopic);
@@ -101,7 +102,7 @@ sub handleFilter {
   } else { # topic text
     return '' if $this->{filteredTopic}{"$theWeb.$theTopic"};
     $this->{filteredTopic}{"$theWeb.$theTopic"} = 1;
-    (undef, $text) = Foswiki::Func::readTopic($theWeb, $theTopic);
+    (undef, $text) = Foswiki::Func::readTopic($theWeb, $theTopic, $theRev);
     $text = '' unless defined $text;
     if ($text =~ /^No permission to read topic/) {
       return inlineError("$text");
