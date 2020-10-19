@@ -1,7 +1,7 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2005-2018 Michael Daum http://michaeldaumconsulting.com
-#
+# Copyright (C) 2005-2020 Michael Daum http://michaeldaumconsulting.com
+
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
@@ -40,7 +40,7 @@ sub new {
   }, $class);
 
   Foswiki::Func::addToZone('head', 'FILTERPLUGIN',
-   '<link rel="stylesheet" type="text/css" href="%PUBURL%/%SYSTEMWEB%/FilterPlugin/filter.css" media="all" />');
+   '<link rel="stylesheet" type="text/css" href="%PUBURLPATH%/%SYSTEMWEB%/FilterPlugin/filter.css" media="all" />');
 
   return $this;
 }
@@ -98,7 +98,10 @@ sub handleFilter {
   # get the source text
   my $text = '';
   if (defined $theText) { # direct text
-    $text = $theText;
+    if ($theExpand) {
+      $text = Foswiki::Func::decodeFormatTokens($theText);
+      $text = Foswiki::Func::expandCommonVariables($text) if $text =~ /%/;
+    }
   } else { # topic text
     return '' if $this->{filteredTopic}{"$theWeb.$theTopic"};
     $this->{filteredTopic}{"$theWeb.$theTopic"} = 1;
@@ -110,7 +113,7 @@ sub handleFilter {
     if ($text =~ /%STARTINCLUDE%(.*)%STOPINCLUDE%/gs) {
       $text = $1;
       if ($theExpand) {
-	$text = Foswiki::Func::expandCommonVariables($text);
+	$text = Foswiki::Func::expandCommonVariables($text) if $text =~ /%/;
 	$text = Foswiki::Func::renderText($text);
       }
     }
@@ -281,6 +284,7 @@ sub handleMakeIndex {
   my $theExclude = $params->{exclude} || '';
   my $theInclude = $params->{include} || '';
   my $theReverse = Foswiki::Func::isTrue($params->{reverse}, 0);
+  my $theHideEmpty = Foswiki::Func::isTrue($params->{hideempty}, 0);
   my $thePattern = $params->{pattern} || '';
   my $theHeader = $params->{header} || '';
   my $theFooter = $params->{footer} || '';
@@ -456,6 +460,8 @@ sub handleMakeIndex {
     # keep track if indexes
     $index++;
   }
+
+  return "" if $theHideEmpty && !@result;
 
   my $anchors = '';
   if (@anchors > $theAnchorThreshold) {
@@ -702,7 +708,7 @@ sub handleFormatList {
 
   $result = $theHeader.$result.$theFooter;
   $result =~ s/\$hits/$hits/g;
-  $result =~ s/\$count/$count/g;
+  $result =~ s/\$count\b/$count/g;
 
   expandVariables($result);
   return $result;

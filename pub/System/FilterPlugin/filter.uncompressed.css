@@ -27,9 +27,13 @@
   page-break-inside: avoid;           /* Theoretically FF 20+ */
   break-inside: avoid-column;         /* IE 11 */
   display:inline-block;
+  /*display:block;*/
   width:100%;
 }
 .fltMakeIndexWrapper .foswikiTopicInfo {
   margin:0;
+}
+.fltMakeIndexWrapper a {
+  word-break:break-word;
 }
 

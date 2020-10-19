@@ -82,7 +82,7 @@ prepended with a header and appended with a footer in case the list is not empty
    * hideempty="on,off": when set to "on" then empty list items will not be added to the result (empty in the sense of ''); set this to "off" to still add them (default "on")
    * limit="...": max number of items to be taken out of the list (default "-1")
    * skip="...": number of list items to skip, not adding them to the result
-   * sort="on,off,alpha,num,nocase" order of the formatted items (default "off")
+   * sort="on,off,alpha,num" order of the formatted items (default "off")
    * reverse="on,off": reverse the sortion of the list
    * unique="on,off": remove dupplicates from the list
    * exclude="...": remove list items that match this regular expression
@@ -121,6 +121,7 @@ parameters:
    * colwidth="...": maximum width of a column, defaults to 18em
    * colgap="...": size of gap betweel columns, defaults to 2em
    * format="...": format of each list item (default "$item")
+   * group="...": format string to prepend to index groups, defaults to =&lt;h3 $anchor>$group&lt;/h3>=
    * sort="on,off,alpha,num,nocase": sort the list (default "on")
    * unique="on/off": removed duplicates (default "off")
    * exclude="...": pattern to check against items in the list to be excluded
@@ -129,6 +130,7 @@ parameters:
    * header="...": format string to prepend to the result
    * footer="..." format string to be appended to the result
    * transliterate="on/off/&lt;mapping>" influences the way sorting and grouping is handled: 
+   * hideempty="on,off": boolean flag to disable any output in case the list is empty
     either a boolean switch to enable/disable decoding unicodes into their neares latin character (using CPAN:Text::Unidecode),
     or a custom mapping list ="&lt;source1>=&lt;target1>, &lt;source2>=&lt;target2>, ..."= to map a source string to a given target string (default "on")
 
@@ -244,7 +246,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
        <div class='foswikiGrayText'>$4 - $3</div>
      </div>"
 }% 
-<style type="text/css">
+<style>
 .indexItem {
   margin:0px 10px 10px 0px;
 }
@@ -259,6 +261,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  19 Oct 2020: | added =hideempty= parameter to MAKEINDEX; fixed =expand= in  =SUBST= aind =EXTRACT= | 
 |  25 Oct 2018: | added =rev= param to %SUBST and %EXTRACT |
 |  08 Oct 2018: | added =colwidth= and =colgap= to %MAKEINDEX; fixed numerical sorting of lists |
 |  01 Jun 2018: | improved sorting of lists, i.e. with numeric values |
@@ -322,7 +325,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 %META:FIELD{name="Release" title="Release" value="%25$RELEASE%25"}%
 %META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
 %META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/FilterPlugin"}%
-%META:FIELD{name="Copyright" title="Copyright" value="2005-2018, Michael Daum http://michaeldaumconsulting.com"}%
+%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2005-2020 Michael Daum"}%
 %META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
 %META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%25TOPIC%25"}%
 %META:FIELD{name="Support" title="Support" value="Foswiki:Support/%25TOPIC%25"}%
