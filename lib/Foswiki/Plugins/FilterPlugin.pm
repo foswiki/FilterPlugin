@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2005-2020 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2005-2022 Michael Daum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -13,7 +13,6 @@
 # GNU General Public License for more details, published at 
 # http://www.gnu.org/copyleft/gpl.html
 #
-###############################################################################
 package Foswiki::Plugins::FilterPlugin;
 
 use strict;
@@ -21,13 +20,12 @@ use warnings;
 
 use Foswiki::Func();
 
-our $VERSION = '5.50';
-our $RELEASE = '19 Oct 2020';
+our $VERSION = '6.10';
+our $RELEASE = '29 Apr 2022';
 our $NO_PREFS_IN_TOPIC = 1;
 our $SHORTDESCRIPTION = 'Substitute and extract information from content by using regular expressions';
 our $core;
 
-###############################################################################
 sub initPlugin {
   my ($currentTopic, $currentWeb) = @_;
 
@@ -47,11 +45,14 @@ sub initPlugin {
     return getCore(shift)->handleExtract(@_);
   });
 
+  Foswiki::Func::registerTagHandler('DECODE', sub {
+    return getCore(shift)->handleDecode(@_);
+  });
+
   $core = undef;
   return 1;
 }
 
-###############################################################################
 sub commonTagsHandler {
 # my ($text, $topic, $web, $included, $meta ) = @_;
 
@@ -66,7 +67,6 @@ sub commonTagsHandler {
   }
 }
 
-###############################################################################
 sub getCore {
   my $session = shift;
 
@@ -78,7 +78,6 @@ sub getCore {
   return $core;
 }
 
-###############################################################################
 sub handleFilterArea {
   return getCore()->handleFilterArea(@_);
 }

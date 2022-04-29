@@ -15,6 +15,13 @@ While the START-STOP versions of SUBST and EXTRACT work on inline text,
 the normal versions process a source topic before including it into the current one.
 
 ---++ Syntax Rules
+---+++ DECODE
+*Syntax*: =%<nop>DECODE{"..." type="..."}%= 
+
+reverses encoding via [[%SYSTEMWEB%.VarENCODE]]. 
+
+   * =type="..."=: type of decoding, can be =url= (default), =entity=, =html, =quote= or =none=
+
 ---+++ SUBST
 *Syntax*: =%<nop>SUBST{topic="..." ...}%= 
 
@@ -87,6 +94,7 @@ prepended with a header and appended with a footer in case the list is not empty
    * unique="on,off": remove dupplicates from the list
    * exclude="...": remove list items that match this regular expression
    * include="...": remove list items that don't match this regular expression
+   * casesensitive="on,off": boolean switch to enable or disable case sensitive matching of exclude and include filters (default "on");
    * selection="...": regular expression that a list item must match to be "selected"; if this matches the =$marker= is inserted
    * marker="...": string to be inserted when the =selection= regex matches; this will be inserted at the position =$marker= as
      indicated in =format= .
@@ -126,6 +134,7 @@ parameters:
    * unique="on/off": removed duplicates (default "off")
    * exclude="...": pattern to check against items in the list to be excluded
    * include="...": pattern to check against items in the list to be included
+   * casesensitive="on,off": boolean switch to enable or disable case sensitive matching of exclude and include filters (default "on");
    * reverse="on/off": reverse the list (default "off")
    * header="...": format string to prepend to the result
    * footer="..." format string to be appended to the result
@@ -261,6 +270,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  29 Apr 2022: | added =casesensitive= parameter to MAKEINDEX and FORMATLIST; new macro =DECODE=; fixed a couple of perl gotchas initializing variables |
 |  19 Oct 2020: | added =hideempty= parameter to MAKEINDEX; fixed =expand= in  =SUBST= aind =EXTRACT= | 
 |  25 Oct 2018: | added =rev= param to %SUBST and %EXTRACT |
 |  08 Oct 2018: | added =colwidth= and =colgap= to %MAKEINDEX; fixed numerical sorting of lists |
@@ -325,7 +335,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 %META:FIELD{name="Release" title="Release" value="%25$RELEASE%25"}%
 %META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
 %META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/FilterPlugin"}%
-%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2005-2020 Michael Daum"}%
+%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2005-2022 Michael Daum"}%
 %META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
 %META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%25TOPIC%25"}%
 %META:FIELD{name="Support" title="Support" value="Foswiki:Support/%25TOPIC%25"}%

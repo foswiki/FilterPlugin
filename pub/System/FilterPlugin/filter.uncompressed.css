@@ -11,7 +11,7 @@
 .fltMakeIndexWrapper h3 {
   font-weight:bold;
   border:0;
-  margin:0.65em 0 0.5em;
+  margin:0.5em 0;
   padding:0;
 }
 .fltMakeIndexContainer {
@@ -19,15 +19,10 @@
   column-width: 18em;
 }
 .fltMakeIndexItem {
-  -webkit-column-break-inside:avoid;
-  -moz-column-break-inside:avoid;
-  -o-column-break-inside:avoid;
-  -ms-column-break-inside:avoid;
-  column-break-inside:avoid;
-  page-break-inside: avoid;           /* Theoretically FF 20+ */
-  break-inside: avoid-column;         /* IE 11 */
-  display:inline-block;
-  /*display:block;*/
+  -webkit-column-break-inside: avoid;
+          page-break-inside: avoid;
+               break-inside: avoid;
+  display:table;
   width:100%;
 }
 .fltMakeIndexWrapper .foswikiTopicInfo {

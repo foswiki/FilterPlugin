@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2005-2020 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2005-2022 Michael Daum http://michaeldaumconsulting.com
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -13,7 +13,6 @@
 # GNU General Public License for more details, published at 
 # http://www.gnu.org/copyleft/gpl.html
 #
-###############################################################################
 
 package Foswiki::Plugins::FilterPlugin::Core;
 
@@ -26,7 +25,6 @@ use Text::Unidecode();
 
 use constant TRACE => 0; # toggle me
 
-###############################################################################
 sub new {
   my ($class, $session) = @_;
 
@@ -45,18 +43,16 @@ sub new {
   return $this;
 }
 
-###############################################################################
 sub handleFilterArea {
   my ($this, $theAttributes, $theMode, $theText, $theWeb, $theTopic) = @_;
 
-  $theAttributes ||= '';
-  #writeDebug("called handleFilterArea($theAttributes)");
+  $theAttributes //= '';
+  writeDebug("called handleFilterArea($theAttributes)");
 
   my %params = Foswiki::Func::extractParameters($theAttributes);
   return $this->handleFilter(\%params, $theMode, $theText, $theWeb, $theTopic);
 }
 
-###############################################################################
 # filter a topic or url thru a regular expression
 # attributes
 #    * pattern
@@ -68,32 +64,32 @@ sub handleFilterArea {
 sub handleFilter {
   my ($this, $params, $theMode, $theText, $theWeb, $theTopic) = @_;
 
-  #writeDebug("called handleFilter(".$params->stringify.")");
-  #writeDebug("theMode = '$theMode'");
+  writeDebug("called handleFilter()");
+  writeDebug("theMode = '$theMode'");
 
   # get parameters
-  my $thePattern = $params->{pattern} || '';
-  my $theFormat = $params->{format} || '';
-  my $theNullFormat = $params->{null} || '';
-  my $theHeader = $params->{header} || '';
-  my $theFooter = $params->{footer} || '';
-  my $theLimit = $params->{limit} || $params->{hits} || 100000; 
-  my $theSkip = $params->{skip} || 0;
+  my $thePattern = $params->{pattern} // '';
+  my $theFormat = $params->{format} // '';
+  my $theNullFormat = $params->{null} // '';
+  my $theHeader = $params->{header} // '';
+  my $theFooter = $params->{footer} // '';
+  my $theLimit = $params->{limit} // $params->{hits} // 100000; 
+  my $theSkip = $params->{skip} // 0;
   my $theExpand = Foswiki::Func::isTrue($params->{expand}, 1);
   my $theSeparator = $params->{separator};
-  my $theExclude = $params->{exclude} || '';
-  my $theInclude = $params->{include} || '';
-  my $theSort = $params->{sort} || 'off';
-  my $theReverse = $params->{reverse} || '';
+  my $theExclude = $params->{exclude} // '';
+  my $theInclude = $params->{include} // '';
+  my $theSort = $params->{sort} // 'off';
+  my $theReverse = $params->{reverse} // '';
   my $theRev = $params->{rev};
 
-  my $thisTopic = $params->{_DEFAULT} || $params->{topic} || $theTopic;
+  my $thisTopic = $params->{_DEFAULT} // $params->{topic} // $theTopic;
   ($theWeb, $theTopic) = Foswiki::Func::normalizeWebTopicName($theWeb, $thisTopic);
   $theWeb =~ s/\//\./g;
   
-  $theText ||= $params->{text};
+  $theText //= $params->{text};
 
-  $theSeparator = '' unless defined $theSeparator;
+  $theSeparator //= '';
 
   # get the source text
   my $text = '';
@@ -106,7 +102,7 @@ sub handleFilter {
     return '' if $this->{filteredTopic}{"$theWeb.$theTopic"};
     $this->{filteredTopic}{"$theWeb.$theTopic"} = 1;
     (undef, $text) = Foswiki::Func::readTopic($theWeb, $theTopic, $theRev);
-    $text = '' unless defined $text;
+    $text //= '';
     if ($text =~ /^No permission to read topic/) {
       return inlineError("$text");
     }
@@ -127,30 +123,39 @@ sub handleFilter {
     # extraction mode
 
     my @result = ();
-    while($text =~ /$thePattern/gms) {
-      my $arg1 = $1;
-      my $arg2 = $2;
-      my $arg3 = $3;
-      my $arg4 = $4;
-      my $arg5 = $5;
-      my $arg6 = $6;
-      my $arg7 = $7;
-      my $arg8 = $8;
-      my $arg9 = $9;
-      my $arg10 = $10;
-
-      $arg1 = '' unless defined $arg1;
-      $arg2 = '' unless defined $arg2;
-      $arg3 = '' unless defined $arg3;
-      $arg4 = '' unless defined $arg4;
-      $arg5 = '' unless defined $arg5;
-      $arg6 = '' unless defined $arg6;
-      $arg7 = '' unless defined $arg7;
-      $arg8 = '' unless defined $arg8;
-      $arg9 = '' unless defined $arg9;
-      $arg10 = '' unless defined $arg10;
+    while($text =~ /$thePattern/gmsc) {
+      my $arg1 = $1 // '';
+      my $arg2 = $2 // '';
+      my $arg3 = $3 // '';
+      my $arg4 = $4 // '';
+      my $arg5 = $5 // '';
+      my $arg6 = $6 // '';
+      my $arg7 = $7 // '';
+      my $arg8 = $8 // '';
+      my $arg9 = $9 // '';
+      my $arg10 = $10 // '';
+      my $arg11 = $11 // '';
+      my $arg12 = $12 // '';
+      my $arg13 = $13 // '';
+      my $arg14 = $14 // '';
+      my $arg15 = $15 // '';
+      my $arg16 = $16 // '';
+      my $arg17 = $17 // '';
+      my $arg18 = $18 // '';
+      my $arg19 = $19 // '';
+      my $arg20 = $20 // '';
 
       my $match = $theFormat;
+      $match =~ s/\$20/$arg20/g;
+      $match =~ s/\$19/$arg19/g;
+      $match =~ s/\$18/$arg18/g;
+      $match =~ s/\$17/$arg17/g;
+      $match =~ s/\$16/$arg16/g;
+      $match =~ s/\$15/$arg15/g;
+      $match =~ s/\$14/$arg14/g;
+      $match =~ s/\$13/$arg13/g;
+      $match =~ s/\$12/$arg12/g;
+      $match =~ s/\$11/$arg11/g;
       $match =~ s/\$10/$arg10/g;
       $match =~ s/\$1/$arg1/g;
       $match =~ s/\$2/$arg2/g;
@@ -161,11 +166,14 @@ sub handleFilter {
       $match =~ s/\$7/$arg7/g;
       $match =~ s/\$8/$arg8/g;
       $match =~ s/\$9/$arg9/g;
+
       next if $theExclude && $match =~ /^($theExclude)$/;
       next if $theInclude && $match !~ /^($theInclude)$/;
       next if $skip-- > 0;
+
       push @result,$match;
       $hits--;
+
       last if $theLimit > 0 && $hits <= 0;
     }
 
@@ -196,31 +204,39 @@ sub handleFilter {
     # substitution mode
     $result = '';
     while($text =~ /(.*?)$thePattern/gcs) {
-      my $prefix = $1;
-      my $arg1 = $2;
-      my $arg2 = $3;
-      my $arg3 = $4;
-      my $arg4 = $5;
-      my $arg5 = $6;
-      my $arg6 = $7;
-      my $arg7 = $8;
-      my $arg8 = $9;
-      my $arg9 = $10;
-      my $arg10 = $11;
-
-      $prefix = '' unless defined $prefix;
-      $arg1 = '' unless defined $arg1;
-      $arg2 = '' unless defined $arg2;
-      $arg3 = '' unless defined $arg3;
-      $arg4 = '' unless defined $arg4;
-      $arg5 = '' unless defined $arg5;
-      $arg6 = '' unless defined $arg6;
-      $arg7 = '' unless defined $arg7;
-      $arg8 = '' unless defined $arg8;
-      $arg9 = '' unless defined $arg9;
-      $arg10 = '' unless defined $arg10;
+      my $prefix = $1 // '';
+      my $arg1 = $2 // '';
+      my $arg2 = $3 // '';
+      my $arg3 = $4 // '';
+      my $arg4 = $5 // '';
+      my $arg5 = $6 // '';
+      my $arg6 = $7 // '';
+      my $arg7 = $8 // '';
+      my $arg8 = $9 // '';
+      my $arg9 = $10 // '';
+      my $arg10 = $11 // '';
+      my $arg11 = $12 // '';
+      my $arg12 = $13 // '';
+      my $arg13 = $14 // '';
+      my $arg14 = $15 // '';
+      my $arg15 = $16 // '';
+      my $arg16 = $17 // '';
+      my $arg17 = $18 // '';
+      my $arg18 = $19 // '';
+      my $arg19 = $20 // '';
+      my $arg20 = $21 // '';
 
       my $match = $theFormat;
+      $match =~ s/\$20/$arg20/g;
+      $match =~ s/\$19/$arg19/g;
+      $match =~ s/\$18/$arg18/g;
+      $match =~ s/\$17/$arg17/g;
+      $match =~ s/\$16/$arg16/g;
+      $match =~ s/\$15/$arg15/g;
+      $match =~ s/\$14/$arg14/g;
+      $match =~ s/\$13/$arg13/g;
+      $match =~ s/\$12/$arg12/g;
+      $match =~ s/\$11/$arg11/g;
       $match =~ s/\$10/$arg10/g;
       $match =~ s/\$1/$arg1/g;
       $match =~ s/\$2/$arg2/g;
@@ -231,9 +247,11 @@ sub handleFilter {
       $match =~ s/\$7/$arg7/g;
       $match =~ s/\$8/$arg8/g;
       $match =~ s/\$9/$arg9/g;
+
       next if $theExclude && $match =~ /^($theExclude)$/;
       next if $theInclude && $match !~ /^($theInclude)$/;
       next if $skip-- > 0;
+
       #writeDebug("match=$match");
       $result .= $prefix.$match;
       #writeDebug("($hits) result=$result");
@@ -254,45 +272,68 @@ sub handleFilter {
   return $result;
 }
 
-###############################################################################
 sub handleSubst {
   my ($this, $params, $theTopic, $theWeb) = @_;
   return $this->handleFilter($params, 1, undef, $theWeb, $theTopic);
 }
 
-###############################################################################
 sub handleExtract {
   my ($this, $params, $theTopic, $theWeb) = @_;
   return $this->handleFilter($params, 0, undef, $theWeb, $theTopic);
 }
 
-###############################################################################
+sub handleDecode {
+  my ($this, $params, $theTopic, $theWeb) = @_;
+
+  my $type = $params->{type} // "url";
+  my $text = $params->{_DEFAULT} // "";
+
+  return "" if $text eq "";
+  return $text if $type =~ /^(off|none)$/i;
+
+  return Foswiki::entityDecode($text) if $type =~ /^entit(y|ies)$/i;
+  return Foswiki::entityDecode($text, "\n\r") if $type =~ /^html$/i;
+  return Foswiki::urlDecode($text) if $type =~ /^url$/i;
+
+  if ($type =~ /^quotes?$/i) {
+    $text =~ s/\\"/"/g;
+    return $text;
+  }
+
+  if ($type =~ /^safe$/i) {
+    $text =~ s/(&#(39|34|60|62|37);)/chr($2)/ge;
+    return $text;
+  }
+  
+  return $text;
+}
+
 sub handleMakeIndex {
   my ($this, $params, $theTopic, $theWeb) = @_;
 
-  #writeDebug("### called handleMakeIndex(".$params->stringify.")");
-  my $theList = $params->{_DEFAULT} || $params->{list} || '';
+  my $theList = $params->{_DEFAULT} // $params->{list} // '';
   my $theFormat = $params->{format};
-  my $theCols = $params->{cols} || "automatic";
+  my $theCols = $params->{cols} // "automatic";
   my $theColWidth = $params->{colwidth};
   my $theColGap = $params->{colgap};
-  my $theSort = $params->{sort} || 'on';
+  my $theSort = $params->{sort} // 'on';
   my $theSplit = $params->{split};
-  $theSplit = '\s*,\s*' unless defined $theSplit;
+  $theSplit //= '\s*,\s*';
 
   my $theUnique = Foswiki::Func::isTrue($params->{unique}, 0);
-  my $theExclude = $params->{exclude} || '';
-  my $theInclude = $params->{include} || '';
+  my $theExclude = $params->{exclude} // '';
+  my $theInclude = $params->{include} // '';
+  my $theCaseSensitive = Foswiki::Func::isTrue($params->{casesensitive}, 1);
   my $theReverse = Foswiki::Func::isTrue($params->{reverse}, 0);
   my $theHideEmpty = Foswiki::Func::isTrue($params->{hideempty}, 0);
-  my $thePattern = $params->{pattern} || '';
-  my $theHeader = $params->{header} || '';
-  my $theFooter = $params->{footer} || '';
+  my $thePattern = $params->{pattern} // '';
+  my $theHeader = $params->{header} // '';
+  my $theFooter = $params->{footer} // '';
   my $theGroup = $params->{group};
-  my $theAnchorThreshold = $params->{anchorthreshold} || 0;
+  my $theAnchorThreshold = $params->{anchorthreshold} // 0;
   my $theTransliterate = $params->{transliterate};
   my $theSeparator = $params->{separator};
-  $theSeparator = "\n" unless defined $theSeparator;
+  $theSeparator //= "\n";
 
   my %map = ();
   if (defined $theTransliterate) {
@@ -309,9 +350,8 @@ sub handleMakeIndex {
   # sanitize params
   $theAnchorThreshold =~ s/[^\d]//g;
   $theAnchorThreshold = 0 unless $theAnchorThreshold;
-  $theGroup = "<h3 \$anchor'>\$group</h3>" unless defined $theGroup;
-
-  $theFormat = '$item' unless defined $theFormat;
+  $theGroup //= "<h3 \$anchor'>\$group</h3>";
+  $theFormat //= '$item';
 
   # compute the list
   $theList = Foswiki::Func::expandCommonVariables($theList, $theTopic, $theWeb)
@@ -321,8 +361,13 @@ sub handleMakeIndex {
   my @theList = ();
   my %seen = ();
   foreach my $item (split(/$theSplit/, $theList)) {
-    next if $theExclude && $item =~ /^($theExclude)$/;
-    next if $theInclude && $item !~ /^($theInclude)$/;
+    if ($theCaseSensitive) {
+      next if $theExclude && $item =~ /^($theExclude)$/;
+      next if $theInclude && $item !~ /^($theInclude)$/;
+    } else {
+      next if $theExclude && $item =~ /^($theExclude)$/i;
+      next if $theInclude && $item !~ /^($theInclude)$/i;
+    }
 
     $item =~ s/<nop>//g;
     $item =~ s/^\s+|\s+$//g;
@@ -351,29 +396,38 @@ sub handleMakeIndex {
 
     my $itemFormat = $theFormat;
     if ($thePattern && $item =~ m/$thePattern/) {
-      my $arg1 = $1;
-      my $arg2 = $2;
-      my $arg3 = $3;
-      my $arg4 = $4;
-      my $arg5 = $5;
-      my $arg6 = $6;
-      my $arg7 = $7;
-      my $arg8 = $8;
-      my $arg9 = $9;
-      my $arg10 = $10;
-
-      $arg1 = '' unless defined $arg1;
-      $arg2 = '' unless defined $arg2;
-      $arg3 = '' unless defined $arg3;
-      $arg4 = '' unless defined $arg4;
-      $arg5 = '' unless defined $arg5;
-      $arg6 = '' unless defined $arg6;
-      $arg7 = '' unless defined $arg7;
-      $arg8 = '' unless defined $arg8;
-      $arg9 = '' unless defined $arg9;
-      $arg10 = '' unless defined $arg10;
+      my $arg1 = $1 // '';
+      my $arg2 = $2 // '';
+      my $arg3 = $3 // '';
+      my $arg4 = $4 // '';
+      my $arg5 = $5 // '';
+      my $arg6 = $6 // '';
+      my $arg7 = $7 // '';
+      my $arg8 = $8 // '';
+      my $arg9 = $9 // '';
+      my $arg10 = $10 // '';
+      my $arg11 = $11 // '';
+      my $arg12 = $12 // '';
+      my $arg13 = $13 // '';
+      my $arg14 = $14 // '';
+      my $arg15 = $15 // '';
+      my $arg16 = $16 // '';
+      my $arg17 = $17 // '';
+      my $arg18 = $18 // '';
+      my $arg19 = $19 // '';
+      my $arg20 = $20 // '';
 
       $item = $arg1 if $arg1;
+      $itemFormat =~ s/\$20/$arg20/g;
+      $itemFormat =~ s/\$19/$arg19/g;
+      $itemFormat =~ s/\$18/$arg18/g;
+      $itemFormat =~ s/\$17/$arg17/g;
+      $itemFormat =~ s/\$16/$arg16/g;
+      $itemFormat =~ s/\$15/$arg15/g;
+      $itemFormat =~ s/\$14/$arg14/g;
+      $itemFormat =~ s/\$13/$arg13/g;
+      $itemFormat =~ s/\$12/$arg12/g;
+      $itemFormat =~ s/\$11/$arg11/g;
       $itemFormat =~ s/\$10/$arg10/g;
       $itemFormat =~ s/\$1/$arg1/g;
       $itemFormat =~ s/\$2/$arg2/g;
@@ -501,43 +555,40 @@ sub handleMakeIndex {
   return $result;
 }
 
-###############################################################################
 sub handleFormatList {
   my ($this, $params, $theTopic, $theWeb) = @_;
  
   #writeDebug("handleFormatList()");
 
-  my $theList = $params->{_DEFAULT};
-  $theList = $params->{list} unless defined $theList;
-  $theList = '' unless defined $theList;
-
-  my $thePattern = $params->{pattern} || '^\s*(.*?)\s*$';
+  my $theList = $params->{_DEFAULT} // $params->{list} // '';
+  my $thePattern = $params->{pattern} // '^\s*(.*?)\s*$';
   my $theFormat = $params->{format};
-  my $theHeader = $params->{header} || '';
-  my $theFooter = $params->{footer} || '';
+  my $theHeader = $params->{header} // '';
+  my $theFooter = $params->{footer} // '';
   my $theSplit = $params->{split};
   my $theSeparator = $params->{separator};
   my $theLastSeparator = $params->{lastseparator};
   my $theLimit = $params->{limit};
-  my $theSkip = $params->{skip} || 0; 
-  my $theSort = $params->{sort} || 'off';
+  my $theSkip = $params->{skip} // 0; 
+  my $theSort = $params->{sort} // 'off';
   my $theUnique = Foswiki::Func::isTrue($params->{unique}, 0);
-  my $theExclude = $params->{exclude} || '';
-  my $theInclude = $params->{include} || '';
+  my $theExclude = $params->{exclude} // '';
+  my $theInclude = $params->{include} // '';
+  my $theCaseSensitive = Foswiki::Func::isTrue($params->{casesensitive}, 1);
   my $theReverse = Foswiki::Func::isTrue($params->{reverse}, 0);
   my $theSelection = $params->{selection};
   my $theMarker = $params->{marker};
   my $theMap = $params->{map};
-  my $theNullFormat = $params->{null} || '';
+  my $theNullFormat = $params->{null};
   my $theTokenize = $params->{tokenize};
   my $theHideEmpty = Foswiki::Func::isTrue($params->{hideempty}, 1);
   my $theReplace = $params->{replace};
 
-  $theLimit = -1 unless defined $theLimit;
-  $theFormat = '$1' unless defined $theFormat;
-  $theSplit = '\s*,\s*' unless defined $theSplit;
-  $theMarker = ' selected ' unless defined $theMarker;
-  $theSeparator = ', ' unless defined $theSeparator;
+  $theLimit //= -1;
+  $theFormat //= '$1';
+  $theSplit //= '\s*,\s*';
+  $theMarker //= ' selected ';
+  $theSeparator //= ', ';
 
   $theList = Foswiki::Func::expandCommonVariables($theList, $theTopic, $theWeb)
     if expandVariables($theList);
@@ -617,63 +668,74 @@ sub handleFormatList {
   if ($theLimit) {
     my %seen = ();
     foreach my $item (@theList) {
+      next if $item =~ /^$/; # skip empty elements
 
       #writeDebug("found '$item'");
-      next if $theExclude && $item =~ /^($theExclude)$/;
-      next if $theInclude && $item !~ /^($theInclude)$/;
-      next if $item =~ /^$/; # skip empty elements
+      if ($theCaseSensitive) {
+        next if $theExclude && $item =~ /^($theExclude)$/;
+        next if $theInclude && $item !~ /^($theInclude)$/;
+      } else {
+        next if $theExclude && $item =~ /^($theExclude)$/i;
+        next if $theInclude && $item !~ /^($theInclude)$/i;
+      }
+
 
       $index++;
       next if $index <= $theSkip;
       last if $theLimit > 0 && $hits >= $theLimit;
 
-      my $arg1 = '';
-      my $arg2 = '';
-      my $arg3 = '';
-      my $arg4 = '';
-      my $arg5 = '';
-      my $arg6 = '';
-      my $arg7 = '';
-      my $arg8 = '';
-      my $arg9 = '';
-      my $arg10 = '';
-      if ($item =~ m/$thePattern/) {
-        $arg1 = $1;
-        $arg2 = $2;
-        $arg3 = $3;
-        $arg4 = $4;
-        $arg5 = $5;
-        $arg6 = $6;
-        $arg7 = $7;
-        $arg8 = $8;
-        $arg9 = $9;
-        $arg10 = $10;
+      my $line = $theFormat;
 
-        $arg1 = '' unless defined $arg1;
-        $arg2 = '' unless defined $arg2;
-        $arg3 = '' unless defined $arg3;
-        $arg4 = '' unless defined $arg4;
-        $arg5 = '' unless defined $arg5;
-        $arg6 = '' unless defined $arg6;
-        $arg7 = '' unless defined $arg7;
-        $arg8 = '' unless defined $arg8;
-        $arg9 = '' unless defined $arg9;
-        $arg10 = '' unless defined $arg10;
+      if ($item =~ m/$thePattern/) {
+        my $arg1 = $1 // '';
+        my $arg2 = $2 // '';
+        my $arg3 = $3 // '';
+        my $arg4 = $4 // '';
+        my $arg5 = $5 // '';
+        my $arg6 = $6 // '';
+        my $arg7 = $7 // '';
+        my $arg8 = $8 // '';
+        my $arg9 = $9 // '';
+        my $arg10 = $10 // '';
+        my $arg11 = $11 // '';
+        my $arg12 = $12 // '';
+        my $arg13 = $13 // '';
+        my $arg14 = $14 // '';
+        my $arg15 = $15 // '';
+        my $arg16 = $16 // '';
+        my $arg17 = $17 // '';
+        my $arg18 = $18 // '';
+        my $arg19 = $19 // '';
+        my $arg20 = $20 // '';
+
+
+        $line =~ s/\$20/$arg20/g;
+        $line =~ s/\$19/$arg19/g;
+        $line =~ s/\$18/$arg18/g;
+        $line =~ s/\$17/$arg17/g;
+        $line =~ s/\$16/$arg16/g;
+        $line =~ s/\$15/$arg15/g;
+        $line =~ s/\$14/$arg14/g;
+        $line =~ s/\$13/$arg13/g;
+        $line =~ s/\$12/$arg12/g;
+        $line =~ s/\$11/$arg11/g;
+        $line =~ s/\$10/$arg10/g;
+        $line =~ s/\$1/$arg1/g;
+        $line =~ s/\$2/$arg2/g;
+        $line =~ s/\$3/$arg3/g;
+        $line =~ s/\$4/$arg4/g;
+        $line =~ s/\$5/$arg5/g;
+        $line =~ s/\$6/$arg6/g;
+        $line =~ s/\$7/$arg7/g;
+        $line =~ s/\$8/$arg8/g;
+        $line =~ s/\$9/$arg9/g;
+
       } else {
         next;
       }
-      my $line = $theFormat;
-      $line =~ s/\$10/$arg10/g;
-      $line =~ s/\$1/$arg1/g;
-      $line =~ s/\$2/$arg2/g;
-      $line =~ s/\$3/$arg3/g;
-      $line =~ s/\$4/$arg4/g;
-      $line =~ s/\$5/$arg5/g;
-      $line =~ s/\$6/$arg6/g;
-      $line =~ s/\$7/$arg7/g;
-      $line =~ s/\$8/$arg8/g;
-      $line =~ s/\$9/$arg9/g;
+
       $line =~ s/\$map\((.*?)\)/($map{$1}||$1)/ge;
+
       #writeDebug("after susbst '$line'");
       if ($theUnique) {
         next if $seen{$line};
@@ -693,7 +755,7 @@ sub handleFormatList {
 
   my $result = '';
   if ($hits == 0) {
-    return '' unless $theNullFormat;
+    return '' unless defined $theNullFormat;
     $result = $theNullFormat;
   } else {
     if (defined($theLastSeparator) && ($index > 1)) {
@@ -714,7 +776,6 @@ sub handleFormatList {
   return $result;
 }
 
-###############################################################################
 sub getAnchorName {
   my ($this, $text) = @_;
 
@@ -726,7 +787,6 @@ sub getAnchorName {
   return $anchor;
 }
 
-###############################################################################
 sub expandVariables {
   my ($text, %params) = @_;
 
@@ -748,7 +808,6 @@ sub expandVariables {
   return $found;
 }
 
-###############################################################################
 sub transliterate {
   my ($string, $map) = @_;
 
@@ -756,7 +815,7 @@ sub transliterate {
   if ($map) {
     my $found = 0;
     foreach my $pattern (keys %$map) {
-      my $replace = $map->{$pattern} || ''; 
+      my $replace = $map->{$pattern} // ''; 
       if ($string =~ s/^$pattern/$replace/g) {
         $found = 1;
       }
@@ -769,12 +828,10 @@ sub transliterate {
   return $string;
 }
 
-###############################################################################
 sub inlineError {
   return "<span class='foswikiAlert'>".$_[0]."</span>";
 }
 
-###############################################################################
 sub writeDebug {
   print STDERR "- FilterPlugin - $_[0]\n" if TRACE;
 }
