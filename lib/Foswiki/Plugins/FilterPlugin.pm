@@ -1,6 +1,6 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2005-2022 Michael Daum http://michaeldaumconsulting.com
+# Copyright (C) 2005-2024 Michael Daum http://michaeldaumconsulting.com
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -15,16 +15,33 @@
 #
 package Foswiki::Plugins::FilterPlugin;
 
+=begin TML
+
+---+ package Foswiki::Plugins::FilterPlugin
+
+base class to hook into the foswiki core
+
+=cut
+
 use strict;
 use warnings;
 
 use Foswiki::Func();
 
-our $VERSION = '6.10';
-our $RELEASE = '29 Apr 2022';
+our $VERSION = '7.10';
+our $RELEASE = '%$RELEASE%';
 our $NO_PREFS_IN_TOPIC = 1;
 our $SHORTDESCRIPTION = 'Substitute and extract information from content by using regular expressions';
+our $LICENSECODE = '%$LICENSECODE%';
 our $core;
+
+=begin TML
+
+---++ initPlugin($topic, $web, $user) -> $boolean
+
+initialize the plugin, automatically called during the core initialization process
+
+=cut
 
 sub initPlugin {
   my ($currentTopic, $currentWeb) = @_;
@@ -49,9 +66,49 @@ sub initPlugin {
     return getCore(shift)->handleDecode(@_);
   });
 
-  $core = undef;
   return 1;
 }
+
+=begin TML
+
+---++ finishPlugin
+
+finish the plugin and the core if it has been used,
+automatically called during the core initialization process
+
+=cut
+
+sub finishPlugin {
+  undef $core;
+}
+
+=begin TML
+
+---++ getCore() -> $core
+
+returns a singleton Foswiki::Plugins::Foswiki::Core object for this plugin; a new core is allocated 
+during each session request; once a core has been created it is destroyed during =finishPlugin()=
+
+=cut
+
+sub getCore {
+  my $session = shift;
+
+  unless (defined $core) {
+    require Foswiki::Plugins::FilterPlugin::Core;
+    $core = new Foswiki::Plugins::FilterPlugin::Core($session)
+  }
+
+  return $core;
+}
+
+=begin TML
+
+---++ commonTagsHandler($text, $topic, $web, $included, $meta) 
+
+hooks into the makro parser
+
+=cut
 
 sub commonTagsHandler {
 # my ($text, $topic, $web, $included, $meta ) = @_;
@@ -67,16 +124,13 @@ sub commonTagsHandler {
   }
 }
 
-sub getCore {
-  my $session = shift;
+=begin TML
 
-  unless (defined $core) {
-    require Foswiki::Plugins::FilterPlugin::Core;
-    $core = new Foswiki::Plugins::FilterPlugin::Core($session)
-  }
+---++ ObjectMethod handleFilterArea()
 
-  return $core;
-}
+handles STARTSUBST and STARTEXTRACT sections
+
+=cut
 
 sub handleFilterArea {
   return getCore()->handleFilterArea(@_);

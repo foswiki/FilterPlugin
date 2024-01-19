@@ -1,7 +1,7 @@
 # Plugin for Foswiki - The Free and Open Source Wiki, http://foswiki.org/
 #
-# Copyright (C) 2005-2022 Michael Daum http://michaeldaumconsulting.com
-
+# Copyright (C) 2005-2024 Michael Daum http://michaeldaumconsulting.com
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
@@ -16,6 +16,16 @@
 
 package Foswiki::Plugins::FilterPlugin::Core;
 
+=begin TML
+
+---+ package Foswiki::Plugins::FilterPlugin::Core
+
+core class for this plugin
+
+an singleton instance is allocated on demand
+
+=cut
+
 use strict;
 use warnings;
 
@@ -24,6 +34,14 @@ use Foswiki::Func();
 use Text::Unidecode();
 
 use constant TRACE => 0; # toggle me
+
+=begin TML
+
+---++ ClassMethod new() -> $core
+
+constructor for a Core object
+
+=cut
 
 sub new {
   my ($class, $session) = @_;
@@ -43,6 +61,12 @@ sub new {
   return $this;
 }
 
+=begin TML
+
+---++ ObjectMethod handleFilterArea($attrs, $mode, $text, $web, $topic) -> $html
+
+=cut
+
 sub handleFilterArea {
   my ($this, $theAttributes, $theMode, $theText, $theWeb, $theTopic) = @_;
 
@@ -53,14 +77,20 @@ sub handleFilterArea {
   return $this->handleFilter(\%params, $theMode, $theText, $theWeb, $theTopic);
 }
 
-# filter a topic or url thru a regular expression
-# attributes
-#    * pattern
-#    * format
-#    * hits
-#    * topic
-#    * expand
-#
+=begin TML
+
+---++ ObjectMethod handleFilter($params, $mode, $text, $web, $topic) -> $html
+
+filter a topic or url thru a regular expression. attributes:
+
+  * pattern
+  * format
+  * hits
+  * topic
+  * expand
+
+=cut
+
 sub handleFilter {
   my ($this, $params, $theMode, $theText, $theWeb, $theTopic) = @_;
 
@@ -272,15 +302,39 @@ sub handleFilter {
   return $result;
 }
 
+=begin TML
+
+---++ ObjectMethod handleSubst($params, $topic, $web) -> $html
+
+implements the %SUBST macro
+
+=cut
+
 sub handleSubst {
   my ($this, $params, $theTopic, $theWeb) = @_;
   return $this->handleFilter($params, 1, undef, $theWeb, $theTopic);
 }
 
+=begin TML
+
+---++ ObjectMethod handleExtract($params, $topic, $web) -> $html
+
+implements the %EXTRACT macro
+
+=cut
+
 sub handleExtract {
   my ($this, $params, $theTopic, $theWeb) = @_;
   return $this->handleFilter($params, 0, undef, $theWeb, $theTopic);
 }
+
+=begin TML
+
+---++ ObjectMethod handleDecode($params, $topic, $web) -> $html
+
+implements the %DECODE macro
+
+=cut
 
 sub handleDecode {
   my ($this, $params, $theTopic, $theWeb) = @_;
@@ -308,6 +362,14 @@ sub handleDecode {
   return $text;
 }
 
+=begin TML
+
+---++ ObjectMethod handleMakeIndex($params, $topic, $web) -> $html
+
+implements the %MAKEINDEX macro
+
+=cut
+
 sub handleMakeIndex {
   my ($this, $params, $theTopic, $theWeb) = @_;
 
@@ -319,6 +381,9 @@ sub handleMakeIndex {
   my $theSort = $params->{sort} // 'on';
   my $theSplit = $params->{split};
   $theSplit //= '\s*,\s*';
+
+  my $theLimit = $params->{limit} // -1;
+  my $theSkip = $params->{skip} // 0; 
 
   my $theUnique = Foswiki::Func::isTrue($params->{unique}, 0);
   my $theExclude = $params->{exclude} // '';
@@ -342,7 +407,7 @@ sub handleMakeIndex {
     } elsif ($theTransliterate =~ /^off|no|false|0$/) {
       $theTransliterate = 0;
     }  else {
-      %map = map {$_ =~ /^(.*)=(.*)$/, $1=>$2} split(/\s*,\s*/, $theTransliterate);
+      %map = map {$_ =~ /^(.*)=(.*)$/; $1=>$2} split(/\s*,\s*/, $theTransliterate);
       $theTransliterate = 1;
     }
   }
@@ -355,7 +420,7 @@ sub handleMakeIndex {
 
   # compute the list
   $theList = Foswiki::Func::expandCommonVariables($theList, $theTopic, $theWeb)
-    if expandVariables($theList);
+    if expandVariables($theList) && $theList =~ /%/;
 
   # create the item descriptors for each list item
   my @theList = ();
@@ -464,6 +529,11 @@ sub handleMakeIndex {
 
   my @result;
   foreach my $descriptor (@theList) {
+
+    $index++;
+    next if $index < $theSkip;
+    last if $theLimit > 0 && $index > $theLimit;
+
     my $format = $descriptor->{format};
     my $item = $descriptor->{item};
     #writeDebug("index=$indexformat");
@@ -493,7 +563,7 @@ sub handleMakeIndex {
         $groupFormat,
         anchor => $anchor,
         group => $group,
-        index => $index + 1,
+        index => $index,
         count => $listSize,
         item => $item,
       );
@@ -503,16 +573,13 @@ sub handleMakeIndex {
     expandVariables(
       $text,
       group => $group,
-      index => $index + 1,
+      index => $index,
       count => $listSize,
       item => $item,
     );
 
     # add to result
     push @result, "<div class='fltMakeIndexItem'>$groupFormat$text</div>";
-
-    # keep track if indexes
-    $index++;
   }
 
   return "" if $theHideEmpty && !@result;
@@ -523,7 +590,7 @@ sub handleMakeIndex {
       $anchors = 
         "<div class='fltAnchors'>".
         join(' ', 
-          map("<a href='#$_->{name}'>$_->{title}</a>", @anchors)
+          map {"<a href='#$_->{name}'>$_->{title}</a>"} @anchors
         ).
         '</div>';
     }
@@ -555,6 +622,14 @@ sub handleMakeIndex {
   return $result;
 }
 
+=begin TML
+
+---++ ObjectMethod handleFormatList($params, $topic, $web) -> $html
+
+implements the %FORMATLIST macro
+
+=cut
+
 sub handleFormatList {
   my ($this, $params, $theTopic, $theWeb) = @_;
  
@@ -583,6 +658,7 @@ sub handleFormatList {
   my $theTokenize = $params->{tokenize};
   my $theHideEmpty = Foswiki::Func::isTrue($params->{hideempty}, 1);
   my $theReplace = $params->{replace};
+  my $theRotate = $params->{rotate};
 
   $theLimit //= -1;
   $theFormat //= '$1';
@@ -591,7 +667,7 @@ sub handleFormatList {
   $theSeparator //= ', ';
 
   $theList = Foswiki::Func::expandCommonVariables($theList, $theTopic, $theWeb)
-    if expandVariables($theList);
+    if expandVariables($theList) && $theList =~ /%/;
 
   #writeDebug("theList='$theList'");
   #writeDebug("thePattern='$thePattern'");
@@ -608,7 +684,7 @@ sub handleFormatList {
 
   my %map = ();
   if ($theMap) {
-    %map = map {$_ =~ /^(.*)=(.*)$/, $1=>$2} split(/\s*,\s*/, $theMap);
+    %map = map {$_ =~ /^(.*)=(.*)$/; $1=>$2} split(/\s*,\s*/, $theMap);
   }
 
   my %tokens = ();
@@ -620,7 +696,7 @@ sub handleFormatList {
   my @theList = split(/$theSplit/, $theList);
 
   if ($theReplace) {
-    my %replace = map {$_ =~ /^(.*)=(.*)$/, $1=>$2} split(/\s*,\s*/, $theReplace);
+    my %replace = map {$_ =~ /^(.*)=(.*)$/; $1=>$2} split(/\s*,\s*/, $theReplace);
     
     foreach my $item (@theList) {
       foreach my $pattern (keys %replace) {
@@ -661,7 +737,24 @@ sub handleFormatList {
   }
   @theList = reverse @theList if $theReverse;
 
+  if (defined $theRotate) {
+    $theRotate =~ s/[^\d\-]//g;
+    $theRotate //= 0;
+    if ($theRotate < 0) {
+      while ($theRotate < 0) {
+        push @theList, shift @theList;
+        $theRotate++;
+      }
+    } else {
+      while ($theRotate > 0) {
+        unshift @theList, pop @theList;
+        $theRotate--;
+      }
+    }
+  }
+
   my $index = 0;
+  my $pos = 0;
   my $hits = 0;
   my @result;
 
@@ -669,6 +762,8 @@ sub handleFormatList {
     my %seen = ();
     foreach my $item (@theList) {
       next if $item =~ /^$/; # skip empty elements
+
+      $pos++;
 
       #writeDebug("found '$item'");
       if ($theCaseSensitive) {
@@ -742,7 +837,8 @@ sub handleFormatList {
         $seen{$line} = 1;
       }
 
-      $line =~ s/\$index/$index/ge;
+      $line =~ s/\$index/$index/g;
+      $line =~ s/\$pos\b/$pos/g;
       if ($theSelection && $item =~ /$theSelection/) {
         $line =~ s/\$marker/$theMarker/g 
       } else {
@@ -776,6 +872,14 @@ sub handleFormatList {
   return $result;
 }
 
+=begin TML
+
+---++ ObjectMethod getAnchorName($text) -> $string
+
+generates an anchor name for a text
+
+=cut
+
 sub getAnchorName {
   my ($this, $text) = @_;
 
@@ -786,6 +890,14 @@ sub getAnchorName {
 
   return $anchor;
 }
+
+=begin TML
+
+---++ ObjectMethod expandVariables($text, %data) -> $string
+
+expands all variables in the %data into the text
+
+=cut
 
 sub expandVariables {
   my ($text, %params) = @_;
@@ -808,6 +920,14 @@ sub expandVariables {
   return $found;
 }
 
+=begin TML
+
+---++ ObjectMethod transliterate($text, $map) -> $map
+
+rewrites $text by mapping the key value pairs in the $map hash
+
+=cut
+
 sub transliterate {
   my ($string, $map) = @_;
 
@@ -828,6 +948,7 @@ sub transliterate {
   return $string;
 }
 
+# static helper
 sub inlineError {
   return "<span class='foswikiAlert'>".$_[0]."</span>";
 }

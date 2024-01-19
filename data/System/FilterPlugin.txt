@@ -91,6 +91,7 @@ prepended with a header and appended with a footer in case the list is not empty
    * skip="...": number of list items to skip, not adding them to the result
    * sort="on,off,alpha,num" order of the formatted items (default "off")
    * reverse="on,off": reverse the sortion of the list
+   * rotate="...": rotate the list right by a positive number, or rotate left by a negative number of items
    * unique="on,off": remove dupplicates from the list
    * exclude="...": remove list items that match this regular expression
    * include="...": remove list items that don't match this regular expression
@@ -101,15 +102,23 @@ prepended with a header and appended with a footer in case the list is not empty
    * map="key1=value1,key2=value2, ...": this establishes a key-value hash available via the =$map()= variable. (see also the =replace= parameter for means
      to preprocess list items automatically.)
 
-The pattern string shall group matching substrings in the list item to which
+The pattern string groups matching substrings in the list item to which
 you can refer to by using $1, $2, ... in the format string. Any format string
-(=format=, =header=, =footer=) may contain variables =$percnt$=, =$nop=,
-=$dollar= and =$n=. The variable =$index= referse to the position number within
-the list being formatted; =$hits= refers to the total number of matched list
-elements; =$count= expands to the total number of elements in the list; 
-=$marker= is set if the =selection= regular expression matches the
-current item. The =$map(key)= macro returns the value for "key" as specified in
-the =map= argument.
+(=format=, =header=, =footer=) may contain format tokens
+
+    * =$percnt$=
+    * =$nop=
+    * =$dollar= and 
+    * =$n=. 
+
+Furthermore the variables:
+
+    * =$index=: expands to the index within the (filtered) list
+    * =$pos=: expands to the position within the unfiltered list (include and exclude not applied)
+    * =$hits=: expands to the total number of matched list elements
+    * =$count=: expands to the total number of elements in the list
+    * =$marker=: is set if the =selection= regular expression matches the current item
+    * =$map(key)=: returns the value for "key" as specified in the =map= argument
 
 ---+++ MAKEINDEX
 *Syntax*: =%<nop>MAKEINDEX{"&lt;list>" ...}%=
@@ -270,6 +279,8 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  19 Jan 2024: | added =rotate= parameter to %FORMATLIST |
+|  23 Jun 2023: | added =$pos= to %FORMATLIST |
 |  29 Apr 2022: | added =casesensitive= parameter to MAKEINDEX and FORMATLIST; new macro =DECODE=; fixed a couple of perl gotchas initializing variables |
 |  19 Oct 2020: | added =hideempty= parameter to MAKEINDEX; fixed =expand= in  =SUBST= aind =EXTRACT= | 
 |  25 Oct 2018: | added =rev= param to %SUBST and %EXTRACT |
@@ -335,7 +346,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 %META:FIELD{name="Release" title="Release" value="%25$RELEASE%25"}%
 %META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
 %META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/FilterPlugin"}%
-%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2005-2022 Michael Daum"}%
+%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2005-2024 Michael Daum"}%
 %META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
 %META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%25TOPIC%25"}%
 %META:FIELD{name="Support" title="Support" value="Foswiki:Support/%25TOPIC%25"}%
