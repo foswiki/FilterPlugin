@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" comment="" date="1540449606" format="1.1" version="1"}%
+%META:TOPICINFO{author="ProjectContributor" comment="" date="1734689028" format="1.1" version="1"}%
 ---+!! %TOPIC%
 %FORMFIELD{"Description"}%
 
@@ -20,7 +20,7 @@ the normal versions process a source topic before including it into the current 
 
 reverses encoding via [[%SYSTEMWEB%.VarENCODE]]. 
 
-   * =type="..."=: type of decoding, can be =url= (default), =entity=, =html, =quote= or =none=
+   * =type="..."=: type of decoding, can be =url= (default), =entity=, =html=, =quote= or =none=
 
 ---+++ SUBST
 *Syntax*: =%<nop>SUBST{topic="..." ...}%= 
@@ -279,6 +279,7 @@ compare with [[http://en.wikipedia.org/wiki/Category:Philosophy_articles_needing
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  01 Nov 2024: | removed local version of Text::Unidecode |
 |  19 Jan 2024: | added =rotate= parameter to %FORMATLIST |
 |  23 Jun 2023: | added =$pos= to %FORMATLIST |
 |  29 Apr 2022: | added =casesensitive= parameter to MAKEINDEX and FORMATLIST; new macro =DECODE=; fixed a couple of perl gotchas initializing variables |
